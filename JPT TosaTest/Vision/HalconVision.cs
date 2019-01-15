@@ -39,7 +39,6 @@ namespace JPT_TosaTest.Vision
 
         #region  Field
         public List<object> _lockList = new List<object>();
-
         private List<HObject> HoImageList = new List<HObject>(10);    //Image
         private List<HTuple> AcqHandleList = new List<HTuple>(10);    //Aqu
         private List<double> KList = new List<double>(10);
@@ -840,11 +839,7 @@ namespace JPT_TosaTest.Vision
                 return false;
             }
         }
-        public bool FindTia(HObject image, List<string> LineParaList, HTuple hom_2D, HTuple ModelPos, out List<object> lineList)
-        {
-            lineList = new List<object>();
-            return true;
-        }
+ 
         public bool DisplayLines(int nCamID, List<Tuple<HTuple, HTuple, HTuple, HTuple>> lineList, string Color = "red")
         {
             try

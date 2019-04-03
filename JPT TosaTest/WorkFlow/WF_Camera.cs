@@ -4,6 +4,7 @@ using JPT_TosaTest.IOCards;
 using JPT_TosaTest.MotionCards;
 using JPT_TosaTest.MotionCards.IrixiCommand;
 using JPT_TosaTest.Vision;
+using JPT_TosaTest.WorkFlow.WorkFlow;
 using M12.Base;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ namespace JPT_TosaTest.WorkFlow
             DO_NOTHING,
             EXIT,
         }
+        STEP Step;
         private const int CAM_TOP = 0, CAM_BACK = 1;
         public override bool UserInit()
         {
@@ -39,10 +41,12 @@ namespace JPT_TosaTest.WorkFlow
                 PushStep(STEP.Init);
                 while (!cts.IsCancellationRequested)
                 {
+                    int n = PeekStep();
+                    var b = Enum.IsDefined(typeof(STEP), n);
                     Thread.Sleep(10);
-                    if (bPause)
+                    if (bPause || b == false)
                         continue;
-                    Step = PeekStep();
+                    Step = (STEP)n;
                     switch (Step)
                     {
                         case STEP.Init:

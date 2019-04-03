@@ -20,15 +20,16 @@
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;TEST;_FAKEMOTION</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;_TEST;_FAKEMOTION</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -40,11 +41,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DevExpress.Charts.v17.1.Core, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\测试与机器人Socket通信\GPAP\CakeTest\bin\Debug\DevExpress.Charts.v17.1.Core.dll</HintPath>
+    </Reference>
     <Reference Include="DevExpress.Data.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Mvvm.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
     <Reference Include="DevExpress.Printing.v17.1.Core, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.RichEdit.v17.1.Core, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\测试与机器人Socket通信\GPAP\CakeTest\bin\Debug\DevExpress.RichEdit.v17.1.Core.dll</HintPath>
+    </Reference>
     <Reference Include="DevExpress.Xpf.Charts.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\DevExpress.Xpf.Charts.v17.1.dll</HintPath>
@@ -52,6 +61,42 @@
     <Reference Include="DevExpress.Xpf.Core.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.PropertyGrid.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Ribbon.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Themes.DXStyle.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\测试与机器人Socket通信\GPAP\CakeTest\bin\Debug\DevExpress.Xpf.Themes.DXStyle.v17.1.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Themes.Office2007Blue.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\测试与机器人Socket通信\GPAP\CakeTest\bin\Debug\DevExpress.Xpf.Themes.Office2007Blue.v17.1.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Themes.Office2007Silver.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\测试与机器人Socket通信\GPAP\CakeTest\bin\Debug\DevExpress.Xpf.Themes.Office2007Silver.v17.1.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Themes.Office2010Blue.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\测试与机器人Socket通信\GPAP\CakeTest\bin\Debug\DevExpress.Xpf.Themes.Office2010Blue.v17.1.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Themes.Office2010Silver.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\测试与机器人Socket通信\GPAP\CakeTest\bin\Debug\DevExpress.Xpf.Themes.Office2010Silver.v17.1.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Themes.Office2016Colorful.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\测试与机器人Socket通信\GPAP\CakeTest\bin\Debug\DevExpress.Xpf.Themes.Office2016Colorful.v17.1.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Themes.Office2016White.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\测试与机器人Socket通信\GPAP\CakeTest\bin\Debug\DevExpress.Xpf.Themes.Office2016White.v17.1.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Themes.Seven.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\测试与机器人Socket通信\GPAP\CakeTest\bin\Debug\DevExpress.Xpf.Themes.Seven.v17.1.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Themes.VS2010.v17.1, Version=17.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\测试与机器人Socket通信\GPAP\CakeTest\bin\Debug\DevExpress.Xpf.Themes.VS2010.v17.1.dll</HintPath>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
@@ -63,7 +108,7 @@
     </Reference>
     <Reference Include="halcondotnet, Version=10.0.0.0, Culture=neutral, PublicKeyToken=4973bed59ddbf2b8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>ExDll\halcondotnet.dll</HintPath>
+      <HintPath>bin\Debug\halcondotnet.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -153,7 +198,6 @@
     <Compile Include="Classes\LogExcel.cs" />
     <Compile Include="Classes\ObservableCollectionThreadSafe.cs" />
     <Compile Include="Classes\PasswordBoxBehavior.cs" />
-    <Compile Include="Classes\PSSWraper.cs" />
     <Compile Include="Classes\WatchDog\Dog.cs" />
     <Compile Include="Communication\CommunicationMgr.cs" />
     <Compile Include="Communication\Comport.cs" />
@@ -322,12 +366,11 @@
     <Compile Include="WorkFlow\CmdArgs\CmdAlignArgs.cs" />
     <Compile Include="WorkFlow\CmdArgs\CmdArgsBase.cs" />
     <Compile Include="WorkFlow\CmdArgs\CmdPreAlignmentArgs.cs" />
-    <Compile Include="WorkFlow\WorkFlowData.cs" />
-    <Compile Include="WorkFlow\WorkTemplate2.cs" />
+    <Compile Include="WorkFlow\WorkFlow\WorkFlowData.cs" />
     <Compile Include="WorkFlow\WF_Aligner.cs" />
     <Compile Include="WorkFlow\WF_Camera.cs" />
-    <Compile Include="WorkFlow\WorkFlowBase.cs" />
-    <Compile Include="WorkFlow\WorkFlowMgr.cs" />
+    <Compile Include="WorkFlow\WorkFlow\WorkFlowBase.cs" />
+    <Compile Include="WorkFlow\WorkFlow\WorkFlowMgr.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -550,7 +593,7 @@
     <Resource Include="Images\Monitor.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\irixi-m12-library-develop\M12\M12.csproj">
+    <ProjectReference Include="..\..\更新之后的M12\M12LIB__csharp-based\M12\M12.csproj">
       <Project>{0d53d43a-73de-4ab8-9549-e9c06675928f}</Project>
       <Name>M12</Name>
     </ProjectReference>
@@ -584,6 +627,7 @@
   <ItemGroup>
     <Resource Include="Images\Draw.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

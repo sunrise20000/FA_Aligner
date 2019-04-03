@@ -11,7 +11,6 @@
              xmlns:AlimentResultCls="clr-namespace:JPT_TosaTest.Classes.AlimentResultClass"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
-             SizeChanged="UserControl_SizeChanged"
              d:DesignHeight="800" d:DesignWidth="1200"
              >
     <UserControl.Resources>
@@ -139,7 +138,7 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <halcon:HWindowControlWPF Name="Cam1" Grid.Row="0"  Margin="1" SizeChanged="Cam1_SizeChanged"/>
+            <halcon:HWindowControlWPF Name="Cam1" Grid.Row="0"  Margin="1"/>
             <halcon:HWindowControlWPF Name="Cam2" Grid.Row="1"  Margin="1"/>
         </Grid>
         <Grid Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">

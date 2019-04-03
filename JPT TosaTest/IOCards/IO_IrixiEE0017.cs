@@ -108,14 +108,14 @@ namespace JPT_TosaTest.IOCards
         {
             value = 0;
             var ret = _controller.ReadDOUT();
-            value += (ret.DIN1 == DigitalIOStatus.ON ? (1 << 0) : 0);
-            value += (ret.DIN2 == DigitalIOStatus.ON ? (1 << 1) : 0);
-            value += (ret.DIN3 == DigitalIOStatus.ON ? (1 << 2) : 0);
-            value += (ret.DIN4 == DigitalIOStatus.ON ? (1 << 3) : 0);
-            value += (ret.DIN5 == DigitalIOStatus.ON ? (1 << 4) : 0);
-            value += (ret.DIN6 == DigitalIOStatus.ON ? (1 << 5) : 0);
-            value += (ret.DIN7 == DigitalIOStatus.ON ? (1 << 6) : 0);
-            value += (ret.DIN8 == DigitalIOStatus.ON ? (1 << 7) : 0);
+            value += (ret.DOUT1 == DigitalIOStatus.ON ? (1 << 0) : 0);
+            value += (ret.DOUT2 == DigitalIOStatus.ON ? (1 << 1) : 0);
+            value += (ret.DOUT3 == DigitalIOStatus.ON ? (1 << 2) : 0);
+            value += (ret.DOUT4 == DigitalIOStatus.ON ? (1 << 3) : 0);
+            value += (ret.DOUT5 == DigitalIOStatus.ON ? (1 << 4) : 0);
+            value += (ret.DOUT6 == DigitalIOStatus.ON ? (1 << 5) : 0);
+            value += (ret.DOUT7 == DigitalIOStatus.ON ? (1 << 6) : 0);
+            value += (ret.DOUT8 == DigitalIOStatus.ON ? (1 << 7) : 0);
             return true;
         }
 

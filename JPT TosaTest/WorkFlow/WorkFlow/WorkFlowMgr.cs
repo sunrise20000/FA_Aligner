@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JPT_TosaTest.WorkFlow
+namespace JPT_TosaTest.WorkFlow.WorkFlow
 {
     public class WorkFlowMgr : WorkFlowData
     {

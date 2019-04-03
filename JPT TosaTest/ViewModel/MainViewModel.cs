@@ -18,11 +18,12 @@ using AxisParaLib.UnitManager;
 using JPT_TosaTest.Vision;
 using System.IO;
 using GalaSoft.MvvmLight.Ioc;
-using JPT_TosaTest.WorkFlow;
+using JPT_TosaTest.WorkFlow.WorkFlow;
 using static JPT_TosaTest.WorkFlow.WF_Aligner;
 using JPT_TosaTest.WorkFlow.CmdArgs;
 using JPT_TosaTest.Config.ProcessParaManager;
 using JPT_TosaTest.Classes.AlimentResultClass;
+using JPT_TosaTest.WorkFlow;
 
 namespace JPT_TosaTest.ViewModel
 {
@@ -64,8 +65,6 @@ namespace JPT_TosaTest.ViewModel
                 Application.Current.Dispatcher.Invoke(()=>ShowErrorinfo(msg));
             });
 
-           
-
             ResultCollection = new ObservableCollection<ResultItem>()
             {
               new ResultItem(){ Index=1, HSG_X=1, HSG_Y=2, HSG_R=3, PLC_X=5, PLC_Y=6, PLC_R=7 }
@@ -87,7 +86,7 @@ namespace JPT_TosaTest.ViewModel
                     //
                 }
             }
-            foreach (var station in WorkFlow.WorkFlowMgr.Instance.stationDic)
+            foreach (var station in WorkFlowMgr.Instance.stationDic)
             {
                 station.Value.OnStationInfoChanged += Value_OnStationInfoChanged1; ;
             }
@@ -123,8 +122,6 @@ namespace JPT_TosaTest.ViewModel
             var fs = type.GetFields();
             for (int i = 1; i < fs.Length; i++)
                 AlignerTypeList.Add(fs[i].Name);
-
-
         }
 
         ~MainViewModel()
@@ -169,7 +166,7 @@ namespace JPT_TosaTest.ViewModel
 
         private void UpdateWorkFlowData(DataTable dt)
         {
-            WorkFlow.WorkFlowMgr.Instance.ClearPt();
+            WorkFlowMgr.Instance.ClearPt();
             if (dt != null)
             {
                 foreach (DataRow row in dt.Rows)
@@ -184,7 +181,7 @@ namespace JPT_TosaTest.ViewModel
                         CX = double.Parse(row[5].ToString()),
                     };
                    
-                    WorkFlow.WorkFlowMgr.Instance.AddPoint(PointModel);
+                    WorkFlowMgr.Instance.AddPoint(PointModel);
                 }
             }
 
@@ -554,7 +551,7 @@ namespace JPT_TosaTest.ViewModel
         {
             get { return new RelayCommand(() => {
 
-                if (WorkFlow.WorkFlowMgr.Instance.StartAllStation())
+                if (WorkFlowMgr.Instance.StartAllStation())
                     SystemState = EnumSystemState.Running;
                 if (ViewIndex == 4)
                     ViewIndex = 1;
@@ -563,12 +560,12 @@ namespace JPT_TosaTest.ViewModel
         }
         public RelayCommand PauseStationCommand
         {
-            get { return new RelayCommand(() => WorkFlow.WorkFlowMgr.Instance.PauseAllStation()); }
+            get { return new RelayCommand(() => WorkFlowMgr.Instance.PauseAllStation()); }
         }
         public RelayCommand StopStationCommand
         {
             get { return new RelayCommand(() => {
-                WorkFlow.WorkFlowMgr.Instance.StopAllStation();
+                WorkFlowMgr.Instance.StopAllStation();
                 MotionMgr.Instance.StopAll();
                 SystemState = EnumSystemState.Idle;
             });}
@@ -616,7 +613,7 @@ namespace JPT_TosaTest.ViewModel
             {
                 return new RelayCommand(() => {
                     Enum.TryParse(CurAlignerTypeString, out EnumAlignerType type);
-                    var station=WorkFlow.WorkFlowMgr.Instance.FindStationByName("WF_Aligner") as WF_Aligner;
+                    var station=WorkFlowMgr.Instance.FindStationByName("WF_Aligner") as WF_Aligner;
                     //预对位
                     station.SetCmd(STEP.MoveToPreAlignPos, new CmdPreAlignmentArgs()
                     {

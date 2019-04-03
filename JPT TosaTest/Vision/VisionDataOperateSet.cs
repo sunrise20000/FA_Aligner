@@ -94,8 +94,7 @@ namespace JPT_TosaTest.Vision
 
         public VisionDataOperateSet()
         {
-            HOperatorSet.GenEmptyObj(out HObject _geometryRegion);
-               
+            HOperatorSet.GenEmptyObj(out HObject _geometryRegion); 
         }
         //private HTuple 
         protected string GetRectData(EnumToolType ToolType, HTuple Row, HTuple Col, HTuple Pi, HTuple L1, HTuple L2)

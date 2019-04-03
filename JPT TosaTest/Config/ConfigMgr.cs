@@ -19,6 +19,7 @@ using System.Text;
 using System.IO.Ports;
 using JPT_TosaTest.Communication;
 using JPT_TosaTest.Config.ProcessParaManager;
+using JPT_TosaTest.WorkFlow.WorkFlow;
 
 namespace JPT_TosaTest.Config
 {

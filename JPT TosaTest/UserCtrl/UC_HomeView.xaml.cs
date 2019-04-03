@@ -23,9 +23,7 @@ namespace JPT_TosaTest.UserCtrl
     /// </summary>
     public partial class UC_HomeView : UserControl
     {
-        private AutoResetEvent SyncEvent = null;
         private bool bFirstLoaded = false;
-        private object Lock = null;
         public UC_HomeView()
         {
             InitializeComponent();
@@ -33,8 +31,6 @@ namespace JPT_TosaTest.UserCtrl
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            HalconVision.Instance.GetSyncSp(out SyncEvent, out Lock, 0);
-            SyncEvent.WaitOne(100);
             LoadDelay(2000);
             bFirstLoaded = true;
         }
@@ -64,36 +60,12 @@ namespace JPT_TosaTest.UserCtrl
             });
         }
 
+
         private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             SetAttachCamWindow(Convert.ToBoolean(e.NewValue));
         }
 
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            //if (Lock != null)
-            //{
-            //    lock (Lock)
-            //    {
-            //        if (SyncEvent != null)
-            //            SyncEvent.Set();
-            //    }
-            //}
-         
-
-        }
-
-        private void Cam1_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (Lock != null)
-            {
-                lock (Lock)
-                {
-                    if (SyncEvent != null)
-                        SyncEvent.Set();
-                }
-            }
-        }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {

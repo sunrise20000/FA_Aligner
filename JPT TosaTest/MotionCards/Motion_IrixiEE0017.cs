@@ -520,7 +520,7 @@ namespace JPT_TosaTest.MotionCards
             {
                 return false;
             }
-            _controller.SetMode(Axis, mode);
+            _controller.ChangeUnitSettings(Axis, mode);
             return true;
         }
 

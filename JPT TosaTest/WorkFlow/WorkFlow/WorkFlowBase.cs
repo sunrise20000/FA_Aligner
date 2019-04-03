@@ -9,7 +9,7 @@ using JPT_TosaTest.Config.SoftwareManager;
 using JPT_TosaTest.Config.SystemCfgManager;
 using JPT_TosaTest.WorkFlow.CmdArgs;
 
-namespace JPT_TosaTest.WorkFlow
+namespace JPT_TosaTest.WorkFlow.WorkFlow
 {
     public enum EnumProductType
     {
@@ -33,17 +33,16 @@ namespace JPT_TosaTest.WorkFlow
         public event StationInfoHandler OnStationInfoChanged;
         protected WorkFlowConfig cfg = null;
         protected CancellationTokenSource cts =new CancellationTokenSource();
-        protected Queue<object> nStepQueue=new Queue<object>();
+        protected Queue<int> nStepQueue=new Queue<int>();
         protected Task t = null;
         protected int nSubStep = 0;
-        protected object Step { get; set; }
         private object _lock = new object();
         public WorkFlowBase(WorkFlowConfig cfg)
         {
             CmdParaQueue = new Queue<CmdArgsBase>();
             this.cfg = cfg;
         }
-        protected object PeekStep()
+        protected int PeekStep()
         {
             try
             {
@@ -51,35 +50,35 @@ namespace JPT_TosaTest.WorkFlow
                 {
                     if(nStepQueue.Count>0)
                         return nStepQueue.Peek();
-                    return null;
+                    return -1;
                 }
             }
             catch
             {
-                return null;
+                return -1;
             }
 
         }
-        protected void PushStep(object Step, CmdArgsBase para=null) {
+        protected void PushStep<T>(T Step, CmdArgsBase para=null) where T:struct {
             lock (_lock)
             {
-                nStepQueue.Enqueue(Step);
+                nStepQueue.Enqueue(Step.GetHashCode());
                 if(para!=null)
                     CmdParaQueue.Enqueue(para);
             }
         }
-        protected void PopAndPushStep(object Step)
+        protected void PopAndPushStep<T>(T Step)
         {
             lock (_lock)
             {
                 nStepQueue.Dequeue();
-                nStepQueue.Enqueue(Step);
+                nStepQueue.Enqueue(Step.GetHashCode());
             }
         }
-        protected void PushBatchStep(object[] nSteps)
+        protected void PushBatchStep<T>(T[] nSteps) where T:struct
         {
             foreach (var step in nSteps)
-                nStepQueue.Enqueue(step);
+                nStepQueue.Enqueue(step.GetHashCode());
         }
         protected void PopStep()
         {
@@ -107,7 +106,7 @@ namespace JPT_TosaTest.WorkFlow
         public void ShowInfo(string strInfo=null)    //int msg, int iPara, object lParam
         {
             if (strInfo == null || strInfo.Trim().ToString() == "")
-                strInfo = Step.ToString();
+                return;
             DateTime dt = DateTime.Now;
             OnStationInfoChanged?.Invoke(StationIndex, cfg.Name, string.Format("{0:D2}:{1:D2}:{2:D2}  {3:D2}", dt.Hour, dt.Minute, dt.Second, strInfo));
         }
@@ -146,12 +145,12 @@ namespace JPT_TosaTest.WorkFlow
             Messenger.Default.Send<string>(ErrorMsg, "Error");
         }
 
-        public void SetCmd(object step,CmdArgsBase para=null)
+        public void SetCmd<T>(T step,CmdArgsBase para=null) where T:struct
         {
-            PushStep(step,para);
+            PushStep(step.GetHashCode(),para);
         }
 
-        public object GetCurCmd()
+        public int GetCurCmd()
         {
             return PeekStep();
         }

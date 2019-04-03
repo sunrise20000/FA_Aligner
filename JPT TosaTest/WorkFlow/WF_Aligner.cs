@@ -16,6 +16,7 @@ using M12.Commands.Alignment;
 using JPT_TosaTest.WorkFlow.CmdArgs;
 using JPT_TosaTest.Config.ProcessParaManager;
 using JPT_TosaTest.Classes.WatchDog;
+using JPT_TosaTest.WorkFlow.WorkFlow;
 
 namespace JPT_TosaTest.WorkFlow
 {
@@ -37,7 +38,7 @@ namespace JPT_TosaTest.WorkFlow
         private Motion_IrixiEE0017 motion = null;
         private IO_IrixiEE0017 io = null;
         private const int AXIS_X = 0, AXIS_Y = 1, AXIS_Z = 2, AXIS_R = 3, AXIS_CX = 4;
-
+        STEP Step;
         #region PointDefine
         WFPointModel PtInitPostion;
         WFPointModel PtCameraLef;
@@ -70,11 +71,12 @@ namespace JPT_TosaTest.WorkFlow
                 PushStep(STEP.Init);
                 while (!cts.IsCancellationRequested)
                 {
-                    Step = PeekStep();
+                    int n = PeekStep();
+                    var b = Enum.IsDefined(typeof(STEP), n);
                     Thread.Sleep(10);
-                    if (bPause || Step==null)
+                    if (bPause || b==false)
                         continue;
-                    
+                    Step = (STEP)n;
                     switch (Step)
                     {
                         case STEP.Init: //初始化

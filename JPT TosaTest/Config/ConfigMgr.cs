@@ -82,7 +82,6 @@ namespace JPT_TosaTest.Config
             {
                 switch (it.Name)
                 {
-
                     case "Comports":
                         foreach (var comportCfg in HardwareCfgMgr.Comports)
                         {

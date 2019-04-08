@@ -27,7 +27,6 @@ namespace JPT_TosaTest.Vision
                 _lockList.Add(new object());
             }
             HOperatorSet.GenEmptyObj(out Region);
-            //CamCfgDic = FindCamera(EnumCamType.GigEVision,new List<string>() { "Cam_Up","Cam_Down"});
         }
         private static readonly Lazy<HalconVision> _instance = new Lazy<HalconVision>(() => new HalconVision());
         public static HalconVision Instance
@@ -153,8 +152,7 @@ namespace JPT_TosaTest.Vision
             }
             catch (Exception ex)
             {
-                Messenger.Default.Send<string>($"Open Camera Error:{CamCfgDic.ElementAt(nCamID)}:{ex.Message}", "ShowError");
-                return false;
+               throw new Exception($"Open Camera Error:{CamCfgDic.ElementAt(nCamID)}:{ex.Message}");
             }
             finally
             {
@@ -166,23 +164,17 @@ namespace JPT_TosaTest.Vision
         {
             if (nCamID < 0)
                 return false;
-            try
+            
+            lock (_lockList[nCamID])
             {
-                lock (_lockList[nCamID])
+                if (ActiveCamDic.Keys.Contains(nCamID))
                 {
-                    if (ActiveCamDic.Keys.Contains(nCamID))
-                    {
-                        HOperatorSet.CloseFramegrabber(AcqHandleList[nCamID]);
-                        ActiveCamDic.Remove(nCamID);
-                    }
-                    return true;
+                    HOperatorSet.CloseFramegrabber(AcqHandleList[nCamID]);
+                    ActiveCamDic.Remove(nCamID);
                 }
+                return true;
             }
-            catch (Exception ex)
-            {
-                Messenger.Default.Send<string>(ex.Message, "ShowError");
-                return false;
-            }
+          
         }
         public bool IsCamOpen(int nCamID)
         {
@@ -210,7 +202,7 @@ namespace JPT_TosaTest.Vision
                 {
                     if (!HwindowDic.Keys.Contains(nCamID))
                     {
-                        Messenger.Default.Send<string>(string.Format("请先给相机{0}绑定视觉窗口", nCamID), "ShowError");
+                        throw new Exception(string.Format("请先给相机{0}绑定视觉窗口", nCamID));
                         return;
                     }
                     if (!IsCamOpen(nCamID))
@@ -244,9 +236,9 @@ namespace JPT_TosaTest.Vision
                     }
                 }
             }
-            catch (Exception ex)
+            catch 
             {
-                Messenger.Default.Send<string>(ex.Message, "ShowError");
+                throw;
             }
             finally
             {
@@ -336,7 +328,7 @@ namespace JPT_TosaTest.Vision
                                     outRegion = Region;
                                     return true;
                                 }
-                                Messenger.Default.Send<String>("绘制模板窗口没有打开,或者该相机未关联绘制模板窗口", "ShowError");
+                                throw new Exception("绘制模板窗口没有打开,或者该相机未关联绘制模板窗口");
                             }
                         }
                         else  //如果是新建的Model
@@ -384,7 +376,7 @@ namespace JPT_TosaTest.Vision
             }
             catch (Exception ex)
             {
-                Messenger.Default.Send<String>(string.Format("DrawRoi出错:{0}", ex.Message), "ShowError");
+                throw new Exception(string.Format("DrawRoi出错:{0}", ex.Message));
                 return false;
             }
         }

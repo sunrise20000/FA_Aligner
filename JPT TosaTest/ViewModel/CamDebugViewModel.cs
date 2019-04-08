@@ -55,6 +55,11 @@ namespace JPT_TosaTest.ViewModel
                 bool bOpen = HalconVision.Instance.OpenCam(i++);
                 CameraCollection.Add(new CameraItem() { CameraName = it.Key, StrCameraState = bOpen ? "Connected" : "DisConnected" });
             }
+
+            foreach (var err in ErrorList)
+                Messenger.Default.Send<string>(err, "Error");
+                    
+
             #endregion          
         }
 

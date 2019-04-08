@@ -30,7 +30,6 @@ namespace JPT_TosaTest.Models
                         FileHelper.DeleteFile(sb.ToString()+".shm");
                         FileHelper.DeleteFile(sb.ToString() + ".reg");
                         FileHelper.DeleteFile(sb.ToString() + ".tup");
-                        Messenger.Default.Send<int>(nCamID, "UpdateModelFiles");
                     }   
                 });
             }

@@ -103,50 +103,11 @@ namespace JPT_TosaTest.UserCtrl
 
         private void MenueShow_Click(object sender, RoutedEventArgs e)
         {
-            (ListBoxRoiModel.DataContext as CamDebugViewModel).ShowRoiModelCommand.Execute(ListBoxRoiModel.SelectedItem);
+            
         }
         private void MenueSelectItem_Click(object sender, RoutedEventArgs e)
         {
-            (ListBoxRoiModel.DataContext as CamDebugViewModel).SelectUseRoiModelCommand.Execute(ListBoxRoiModel.SelectedItem);
-        }
-
-        private void BtnRunTool_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            LvEdgeToolItem model = lvToolSet.SelectedItem as LvEdgeToolItem;
-            ToolDataBase Data = null;
-            switch (model.ToolType)
-            {
-                case EnumToolType.CircleTool:
-                    Data = CircleTool.Data;
-                    break;
-                case EnumToolType.LineTool:
-                    Data = LineTool.Data;
-                    break;
-                case EnumToolType.PairTool:
-                    Data = PairTool.Data;
-                    break;
-                case EnumToolType.FlagTool:
-                    Data = TagTool.Data;
-                    break;
-                default:
-                    break;
-            }
-            (ListBoxRoiModel.DataContext as CamDebugViewModel).DebugRunToolCommand.Execute(Data);
-        }
-
-        /// <summary>
-        /// EdgeTool选择项发生变化
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void lvToolSet_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void CamDebug_HMouseWheel(object sender, HalconDotNet.HMouseEventArgsWPF e)
-        {
-            Console.WriteLine(e.Delta);
-        }
+            
+        }    
     }
 }

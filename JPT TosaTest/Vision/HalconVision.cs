@@ -7,7 +7,6 @@ using GalaSoft.MvvmLight.Messaging;
 using HalconDotNet;
 using JPT_TosaTest.Classes;
 using JPT_TosaTest.UserCtrl;
-using JPT_TosaTest.UserCtrl.VisionDebugTool;
 using JPT_TosaTest.Vision.ProcessStep;
 
 namespace JPT_TosaTest.Vision
@@ -942,6 +941,7 @@ namespace JPT_TosaTest.Vision
         }
         #endregion
 
+        [Obsolete("此方法过时",true)]
         public bool PreCreateShapeModel(int nCamID, int MinThre, int MaxThre, EnumShapeModelType modelType, string regionFilePath, object regionIn = null)
         {
             if (nCamID < 0 || MaxThre < MinThre)
@@ -964,6 +964,8 @@ namespace JPT_TosaTest.Vision
             }
             return true;
         }
+
+        [Obsolete("此方法过时", true)]
         public bool SaveShapeModel(int nCamID, int MinThre, int MaxThre, EnumShapeModelType modelType, string regionFilePath, object regionIn = null)
         {
             if (nCamID < 0 || MaxThre < MinThre)
@@ -976,6 +978,7 @@ namespace JPT_TosaTest.Vision
                     case EnumShapeModelType.Gray:
                         break;
                     case EnumShapeModelType.Shape:
+
                         break;
                     case EnumShapeModelType.XLD:
                         HObject region = regionIn as HObject;
@@ -1649,32 +1652,9 @@ namespace JPT_TosaTest.Vision
             hv_newCol = hv_BaseCol.Clone();
             
             hv_nCount = 0;
-
-            switch (Polarity)
-            {
-                case EnumPairType.Dark:
-                    hv_Polarity = "negative";
-                    break;
-                case EnumPairType.Light:
-                    hv_Polarity = "positive";
-                    break;
-                case EnumPairType.All:
-                    hv_Polarity = "all";
-                    break;
-            }
-            switch (selectType)
-            {
-                case EnumSelectType.First:
-                    hv_SelectType = "first";
-                    break;
-                case EnumSelectType.Last:
-                    hv_SelectType = "last";
-                    break;
-                case EnumSelectType.All:
-                    hv_SelectType = "all";
-                    break;
-            }
-
+   
+            hv_Polarity = Polarity.ToString().ToLower();
+            hv_SelectType = selectType.ToString().ToLower();
             for (hv_Index = 1; hv_Index.Continue(hv_CaliperNum_COPY_INP_TMP, 1); hv_Index = hv_Index.TupleAdd(1))
             {
                 HOperatorSet.GenMeasureRectangle2(hv_newRow, hv_newCol, hv_RoiPhi, hv_newL1,

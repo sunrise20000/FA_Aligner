@@ -25,6 +25,7 @@ namespace JPT_TosaTest.Vision
     public enum EnumCamType
     {
         GigEVision,
+        GigEVision2,
         DirectShow,
         uEye,
         HuaRay

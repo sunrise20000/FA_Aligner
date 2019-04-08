@@ -15,7 +15,6 @@
              >
     <UserControl.Resources>
         <AlimentResultCls:ChartTypeByResultSelector x:Key="ChartTypeByResultSelector"/>
-        
         <DataTemplate x:Key="ResultChart2D">
             <dxc:ChartControl >
                 <dxc:ChartControl.Palette>
@@ -229,7 +228,7 @@
                         </Grid>
                     </TabItem>
                 </TabControl>
-                <Image Source="../Images/Pause_128.png" Width="128" Height="128"/>
+                <Image Source="../Images/Pause_128.png" Width="128" Height="128" Opacity="0.5" Visibility="{Binding IsPaused, Converter={StaticResource Bool2Visibility}}"/>
                 
             </Grid>
         </Grid>

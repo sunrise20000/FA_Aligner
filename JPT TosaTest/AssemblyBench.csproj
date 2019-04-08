@@ -171,6 +171,7 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -251,18 +252,14 @@
     <Compile Include="Converter\Uint2bool.cs" />
     <Compile Include="Converter\UserName2Visibility.cs" />
     <Compile Include="Converter\Visibility2Enable.cs" />
-    <Compile Include="Design\DesignDataService.cs" />
     <Compile Include="Instrument\InstrumentBase.cs" />
     <Compile Include="Instrument\InstrumentMgr.cs" />
     <Compile Include="IOCards\IIO.cs" />
     <Compile Include="IOCards\IOCardMgr.cs" />
     <Compile Include="IOCards\IO_IrixiEE0017.cs" />
     <Compile Include="Model\CameraItem.cs" />
-    <Compile Include="Model\DataItem.cs" />
-    <Compile Include="Model\DataService.cs" />
     <Compile Include="Model\HardwareParaModel.cs" />
     <Compile Include="Model\HotKeyModel.cs" />
-    <Compile Include="Model\IDataService.cs" />
     <Compile Include="Model\IOModel.cs" />
     <Compile Include="Model\LvEdgeToolItem.cs" />
     <Compile Include="Model\MessageItem.cs" />
@@ -328,18 +325,6 @@
     </Compile>
     <Compile Include="UserCtrl\UC_TeachBox.xaml.cs">
       <DependentUpon>UC_TeachBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserCtrl\VisionDebugTool\UC_CirclePanel.xaml.cs">
-      <DependentUpon>UC_CirclePanel.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserCtrl\VisionDebugTool\UC_FlagPanel.xaml.cs">
-      <DependentUpon>UC_FlagPanel.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserCtrl\VisionDebugTool\UC_LinePanel.xaml.cs">
-      <DependentUpon>UC_LinePanel.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserCtrl\VisionDebugTool\UC_PairPanel.xaml.cs">
-      <DependentUpon>UC_PairPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserCtrl\Window_AddRoiModel.xaml.cs">
       <DependentUpon>Window_AddRoiModel.xaml</DependentUpon>
@@ -467,22 +452,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserCtrl\VisionDebugTool\UC_CirclePanel.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserCtrl\VisionDebugTool\UC_FlagPanel.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserCtrl\VisionDebugTool\UC_LinePanel.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserCtrl\VisionDebugTool\UC_PairPanel.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UserCtrl\Window_AddRoiModel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -600,6 +569,10 @@
     <ProjectReference Include="..\AxisParaLib\AxisParaLib.csproj">
       <Project>{550d7643-117d-4b91-8da7-56a138558edb}</Project>
       <Name>AxisParaLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HalconModle\HalconModle.csproj">
+      <Project>{6b1e1cb0-1fe6-4d7d-b7ba-07e4debd6f3f}</Project>
+      <Name>HalconModle</Name>
     </ProjectReference>
     <ProjectReference Include="..\IrixiMotionLib\IrixiMotionLib.csproj">
       <Project>{D58CAF83-E372-4051-9819-D2752AAC3E41}</Project>

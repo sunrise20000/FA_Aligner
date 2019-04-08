@@ -57,8 +57,8 @@ namespace JPT_TosaTest.ViewModel
                             CAMERA_PAGE = 4, MONITOR_PAGE = 5, USER_PAGE = 6;
 
         private IAlimentResult _alimentResult = null;
-
-        public MainViewModel(IDataService dataService)
+        bool isPaused = false;
+        public MainViewModel()
         {
             //注册错误显示消息
             Messenger.Default.Register<string>(this, "Error", msg => {
@@ -204,6 +204,20 @@ namespace JPT_TosaTest.ViewModel
         {
             get;
             set;
+        }
+
+        public bool IsPaused
+        {
+            get { return isPaused; }
+            set
+            {
+                if (isPaused != value)
+                {
+                    isPaused = value;
+                    RaisePropertyChanged();
+                }
+            }
+            
         }
         public DataTable DataForPreSetPosition
         {

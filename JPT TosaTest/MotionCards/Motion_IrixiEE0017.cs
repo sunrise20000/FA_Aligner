@@ -139,7 +139,7 @@ namespace JPT_TosaTest.MotionCards
             HomeAsync(AxisNo, Dir, Acc, Speed1, Speed2);
             return true;
         }
-        private async Task<bool> HomeAsync(int AxisNo, int Dir, double Acc, double Speed1, double Speed2)
+        private async Task<bool> HomeAsync(int AxisNo, int Dir, double Acc, double LowSpeed, double HiSpeed)
         {
             return await Task.Run(() =>
             {
@@ -152,7 +152,7 @@ namespace JPT_TosaTest.MotionCards
                 {
                     try
                     {
-                        _controller.Home((M12.Definitions.UnitID)axisIndex, (ushort)Acc, (byte)Speed1, (byte)Speed2);
+                        _controller.Home((M12.Definitions.UnitID)axisIndex, (ushort)Acc, (byte)LowSpeed, (byte)HiSpeed);
                     }
                     catch
                     {

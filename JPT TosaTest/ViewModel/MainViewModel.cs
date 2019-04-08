@@ -607,38 +607,38 @@ namespace JPT_TosaTest.ViewModel
         /// <summary>
         /// 开始耦合
         /// </summary>
-        public RelayCommand CommandStartAlign   //开始耦合
-        {
-            get
-            {
-                return new RelayCommand(() => {
-                    Enum.TryParse(CurAlignerTypeString, out EnumAlignerType type);
-                    var station=WorkFlowMgr.Instance.FindStationByName("WF_Aligner") as WF_Aligner;
-                    //预对位
-                    station.SetCmd(STEP.MoveToPreAlignPos, new CmdPreAlignmentArgs()
-                    {
-                        AxisNoBaseZero = 0,
-                    });
+        //public RelayCommand CommandStartAlign   //开始耦合
+        //{
+        //    get
+        //    {
+        //        return new RelayCommand(() => {
+        //            Enum.TryParse(CurAlignerTypeString, out EnumAlignerType type);
+        //            var station=WorkFlowMgr.Instance.FindStationByName("WF_Aligner") as WF_Aligner;
+        //            //预对位
+        //            station.SetCmd(STEP.MoveToPreAlignPos, new CmdPreAlignmentArgs()
+        //            {
+        //                AxisNoBaseZero = 0,
+        //            });
 
-                    station.SetCmd(STEP.MoveToPreAlignPos, new CmdPreAlignmentArgs()
-                    {
-                        AxisNoBaseZero = 1,
-                    });
+        //            station.SetCmd(STEP.MoveToPreAlignPos, new CmdPreAlignmentArgs()
+        //            {
+        //                AxisNoBaseZero = 1,
+        //            });
 
-                    //耦合
-                    Config.ConfigMgr.Instance.ProcessDataMgr.GetBlindSearchArgs(out BlindSearchArgsF HArg, out BlindSearchArgsF VArg);
-                    var CmdArgs = new CmdAlignArgs()
-                    {
-                        CmdName = STEP.DoBlindSearchAlign.ToString(),
-                        HArgs = HArg,
-                        VArgs = VArg,
-                    };
-                    CmdArgs.OnAligmentFinished += CmdArgs_OnAligmentFinished;
-                    station.SetCmd(STEP.DoBlindSearchAlign, CmdArgs);
+        //            //耦合
+        //            Config.ConfigMgr.Instance.ProcessDataMgr.GetBlindSearchArgs(out BlindSearchArgsF HArg, out BlindSearchArgsF VArg);
+        //            var CmdArgs = new CmdAlignArgs()
+        //            {
+        //                CmdName = STEP.DoBlindSearchAlign.ToString(),
+        //                HArgs = HArg,
+        //                VArgs = VArg,
+        //            };
+        //            CmdArgs.OnAligmentFinished += CmdArgs_OnAligmentFinished;
+        //            station.SetCmd(STEP.DoBlindSearchAlign, CmdArgs);
 
-                });
-            }
-        }
+        //        });
+        //    }
+        //}
 
         private void CmdArgs_OnAligmentFinished(object sender, List<M12.Base.Point3D> e)
         {
@@ -675,8 +675,6 @@ namespace JPT_TosaTest.ViewModel
                 return new RelayCommand(() => {
                     var station = WorkFlowMgr.Instance.FindStationByName("WF_Aligner");
                     station.SetCmd(STEP.Init);
-
-
                 });
             }
         }

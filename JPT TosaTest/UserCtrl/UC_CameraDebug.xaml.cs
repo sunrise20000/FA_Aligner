@@ -46,7 +46,6 @@ namespace JPT_TosaTest.UserCtrl
         public UC_CameraDebug()
         {
             InitializeComponent();
-            
         }
         private void Cb_Cameras_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -54,13 +53,9 @@ namespace JPT_TosaTest.UserCtrl
                 HalconVision.Instance.AttachCamWIndow(Cb_Cameras.SelectedIndex, "CameraDebug", CamDebug.HalconID);
         }
 
-        #region 视觉窗口预防崩溃
-        private AutoResetEvent SyncEvent = null;
-        private Object Lock = null;
+  
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            HalconVision.Instance.GetSyncSp(out SyncEvent, out Lock, 0);
-            SyncEvent.WaitOne(100);
             LoadDelay(2000);
             bFirstLoaded = true;
         }
@@ -87,27 +82,5 @@ namespace JPT_TosaTest.UserCtrl
         {
             SetAttachCamWindow(Convert.ToBoolean(e.NewValue));
         }
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (Lock != null)
-            {
-                lock (Lock)
-                {
-                    if (SyncEvent != null)
-                        SyncEvent.Set();
-                }
-            }
-
-        }
-        #endregion
-
-        private void MenueShow_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
-        private void MenueSelectItem_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }    
     }
 }

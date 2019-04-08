@@ -24,25 +24,29 @@ namespace JPT_TosaTest.WorkFlow
     {
         public enum STEP : int
         {
-            Init,
-            MoveR90Deg,
+            Init,   //回机械原点
 
-            DoBlindSearchAlign,
-            DoFastAlign1D,
+            AdjustAngle,    //计算并调整角度
+           
+            AdjustXY, //计算并调整距离
+
+            AdjustXYRel,  //调整相对位置
+
+            DoBlindSearchAlign, //耦合
 
             DO_NOTHING,
             EXIT,
         }
-
 
         private Motion_IrixiEE0017 motion = null;
         private IO_IrixiEE0017 io = null;
         private const int AXIS_X = 0, AXIS_Y = 1, AXIS_Z = 2, AXIS_R = 4;
         STEP Step;
         #region PointDefine
-        WFPointModel PtInitPostion;
-        WFPointModel PtCameraLef;
-        WFPointModel PtCameraRight;
+        WFPointModel PtCamBottomSnapPos;    //下相机拍照点
+        WFPointModel PtCamTopSnapPos;       //上相机拍照点
+        const int IN_STEP_PLC = 0, IN_STEP_FA = 1;
+        const int OUT_STEP_PLC = 0, OUT_STEP_FA = 1;
         #endregion
 
         public override bool UserInit()
@@ -50,10 +54,15 @@ namespace JPT_TosaTest.WorkFlow
             motion = MotionMgr.Instance.FindMotionCardByAxisIndex(1) as Motion_IrixiEE0017;
             io = IOCardMgr.Instance.FindIOCardByCardName("IO_IrixiEE0017[0]") as IO_IrixiEE0017;
             bool bRet = motion != null && io != null && LoadPoint();
+            io.OnIOStateChanged += Io_OnIOStateChanged;
+
             if (!bRet)
                 ShowInfo($"初始化失败");
             return bRet;
         }
+
+       
+
         public WF_Aligner(WorkFlowConfig cfg) : base(cfg)
         {
 
@@ -78,8 +87,23 @@ namespace JPT_TosaTest.WorkFlow
                             HomeAll();
                             PopStep();
                             break;
-
-
+                        case STEP.AdjustAngle:  //调整角度
+                            AdjectAngle();
+                            PopStep();
+                            break;
+                        case STEP.AdjustXY:   //调整距离
+                            AdjustXY();
+                            PopStep();
+                            break;
+                        case STEP.AdjustXYRel:    //调整相对位置
+                            AdjustXYRel();
+                            PopStep();
+                            break;
+   
+                        case STEP.DoBlindSearchAlign:
+                            DoBlindSearchAlignment(null);
+                            PopStep();
+                            break;
                         case STEP.EXIT:
                             return 0;
                         default:
@@ -133,7 +157,7 @@ namespace JPT_TosaTest.WorkFlow
                     case 4:
                         if (motion.IsHomeStop(AXIS_R))
                         {
-                            motion.MoveAbs(AXIS_R, 500, 5, 90);
+                            motion.MoveAbs(AXIS_R, 500, 5, 120);
                             nSubStep = 5;
                         }
                         break;
@@ -152,29 +176,129 @@ namespace JPT_TosaTest.WorkFlow
         }
 
         /// <summary>
-        /// 移动到初始位置
+        /// 调整角度
         /// </summary>
-        private void MoveToInitPos()
+        private void AdjectAngle()
         {
             var dog = new Dog(30000);
             nSubStep = 1;
             while (!cts.IsCancellationRequested)
             {
-                dog.CheckTimeOut("移动到初始位置超时");
+                dog.CheckTimeOut("调整角度超时");
                 switch (nSubStep)
                 {
+                    //移动到拍照位置
                     case 1:
-                        motion.MoveAbs(AXIS_X, 1000, 5, PtInitPostion.X);
-                        motion.MoveAbs(AXIS_Y, 1000, 5, PtInitPostion.Y);
-                        motion.MoveAbs(AXIS_Z, 1000, 5, PtInitPostion.Z);
-                        motion.MoveAbs(AXIS_R, 1000, 5, PtInitPostion.R);
-                        nSubStep = 2;
+                        motion.MoveAbs(AXIS_Z, 1000, 5, 0);
                         break;
                     case 2:
-                        if (motion.IsNormalStop(AXIS_X) && motion.IsNormalStop(AXIS_Y) &&
-                            motion.IsNormalStop(AXIS_Z) && motion.IsNormalStop(AXIS_R))
-                            return;
+                        if (motion.IsNormalStop(AXIS_Z))
+                        {
+                            nSubStep = 3;
+                        }
                         break;
+                    case 3:
+                        motion.MoveAbs(AXIS_X, 1000, 5, PtCamBottomSnapPos.X);
+                        motion.MoveAbs(AXIS_Y, 1000, 5, PtCamBottomSnapPos.Y);
+                        nSubStep = 4;
+                        break;
+                    case 4:
+                        if (motion.IsNormalStop(AXIS_X) && motion.IsNormalStop(AXIS_Y))
+                        {
+                            motion.MoveAbs(AXIS_Y, 1000, 5, PtCamBottomSnapPos.Z);
+                            nSubStep = 5;
+                        }
+                        break;
+                    case 5:
+                        //Snap
+                        nSubStep = 6;
+                        break;
+                    case 6:
+                        //Rotate
+                        return;
+                }
+            }
+        }
+        private void AdjustXY()
+        {
+            var dog = new Dog(30000);
+            nSubStep = 1;
+            while (!cts.IsCancellationRequested)
+            {
+                dog.CheckTimeOut("调整角度超时");
+                switch (nSubStep)
+                {
+                    //移动到拍照位置
+                    case 1:
+                        motion.MoveAbs(AXIS_Z, 1000, 5, 0);
+                        break;
+                    case 2:
+                        if (motion.IsNormalStop(AXIS_Z))
+                        {
+                            nSubStep = 3;
+                        }
+                        break;
+                    case 3:
+                        motion.MoveAbs(AXIS_X, 1000, 5, PtCamBottomSnapPos.X);
+                        motion.MoveAbs(AXIS_Y, 1000, 5, PtCamBottomSnapPos.Y);
+                        nSubStep = 4;
+                        break;
+                    case 4:
+                        if (motion.IsNormalStop(AXIS_X) && motion.IsNormalStop(AXIS_Y))
+                        {
+                            motion.MoveAbs(AXIS_Y, 1000, 5, PtCamBottomSnapPos.Z);
+                            nSubStep = 5;
+                        }
+                        break;
+                    case 5:
+                        //Snap
+                        nSubStep = 6;
+                        break;
+                    case 6:
+                        //MoveXY
+                        return;
+                }
+            }
+        }
+
+        private void AdjustXYRel()
+        {
+            var dog = new Dog(30000);
+            nSubStep = 1;
+            while (!cts.IsCancellationRequested)
+            {
+                dog.CheckTimeOut("调整角度超时");
+                switch (nSubStep)
+                {
+                    //移动到拍照位置
+                    case 1:
+                        motion.MoveAbs(AXIS_Z, 1000, 5, 0);
+                        break;
+                    case 2:
+                        if (motion.IsNormalStop(AXIS_Z))
+                        {
+                            nSubStep = 3;
+                        }
+                        break;
+                    case 3:
+                        motion.MoveAbs(AXIS_X, 1000, 5, PtCamTopSnapPos.X);
+                        motion.MoveAbs(AXIS_Y, 1000, 5, PtCamTopSnapPos.Y);
+                        nSubStep = 4;
+                        break;
+                    case 4:
+                        if (motion.IsNormalStop(AXIS_X) && motion.IsNormalStop(AXIS_Y))
+                        {
+                            motion.MoveAbs(AXIS_Y, 1000, 5, PtCamBottomSnapPos.Z);
+                            nSubStep = 5;
+                        }
+                        break;
+                    case 5:
+                        //Snap
+                        nSubStep = 6;
+                        break;
+                    case 6:
+                        //MoveXY
+                        return;
                 }
             }
         }
@@ -193,61 +317,38 @@ namespace JPT_TosaTest.WorkFlow
             ShowInfo("耦合完成......");
         }
 
-        /// <summary>
-        /// 接触传感器预对位
-        /// </summary>
-        /// <param name="HAxis"></param>
-        private void MoveToProAlignPosition(int HAxisNo)
-        {
-            var dog = new Dog(60000);
-            nSubStep = 1;
-            motion.SetCssThreshold(CSSCH.CH1, 500, 1000);
-            motion.SetCssEnable(CSSCH.CH1, true);
-            ShowInfo("正在预对位");
-            while (!cts.IsCancellationRequested)
-            {
-                dog.CheckTimeOut("预对位超时");
-                switch (nSubStep)
-                {
-                    case 1:
-                        ShowInfo("寻找TouchSensor......");
-                        motion.MoveAbs(HAxisNo, 1000, 5, 2);
-                        nSubStep = 2;
-                        break;
-                    case 2:
-                        if (motion.IsNormalStop(HAxisNo))
-                        {
-                            ShowInfo("寻找TouchSensor Ok");
-                            nSubStep = 3;
-                        }
-                        break;
-                    case 3:
-                        ShowInfo("反向中......");
-                        motion.MoveRel(HAxisNo, 1000, 5, -0.01);
-                        nSubStep = 4;
-                        break;
-                    case 4:
-                        if (motion.IsNormalStop(HAxisNo))
-                        {
-                            ShowInfo("预对位完成");
-                            return;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }          
-        }
-
-
-        #endregion
-
-        #region LoadPoint
         protected bool LoadPoint()
         {
-            PtInitPostion = WorkFlowMgr.Instance.GetPoint("初始位置");
+            PtCamBottomSnapPos = WorkFlowMgr.Instance.GetPoint("下相机拍照位置");
+            PtCamTopSnapPos = WorkFlowMgr.Instance.GetPoint("上相机拍照位置");
+            return PtCamBottomSnapPos!=null;
+        }
 
-            return PtInitPostion!=null;
+        private void Io_OnIOStateChanged(IIO sender, EnumIOType IOType, ushort OldValue, ushort NewValue)
+        {
+            if (IOType == EnumIOType.INPUT)
+            {
+                bool oldPlcSwitchState = (OldValue >> IN_STEP_PLC) == 1;
+                bool oldFASwitchState= (OldValue >> IN_STEP_FA) == 1;
+
+                bool newPlcSwitchState= (NewValue >> IN_STEP_PLC) == 1;
+                bool newFASwitchState = (NewValue >> IN_STEP_FA) == 1;
+
+                if (newPlcSwitchState != oldPlcSwitchState)
+                {
+                    if (io.ReadIoOutBit(OUT_STEP_PLC, out bool v))
+                    {
+                        io.WriteIoOutBit(OUT_STEP_PLC, !v);
+                    }
+                }
+                if (newFASwitchState != oldFASwitchState)
+                {
+                    if (io.ReadIoOutBit(OUT_STEP_FA, out bool v))
+                    {
+                        io.WriteIoOutBit(OUT_STEP_FA, !v);
+                    }
+                }
+            }
         }
         #endregion
 

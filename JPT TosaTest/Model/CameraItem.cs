@@ -8,11 +8,17 @@ using System.Threading.Tasks;
 
 namespace JPT_TosaTest.Models 
 {
+    public enum EnumCamState
+    {
+        Connected,
+        DisConnected,
+    }
+
     public class CameraItem : INotifyPropertyChanged
     {
-        private string _strCameraState = "";
+        private EnumCamState _strCameraState =EnumCamState.DisConnected;
         private string _cameraName = "";
-        public string StrCameraState
+        public EnumCamState StrCameraState
         {
             set
             {
@@ -36,6 +42,12 @@ namespace JPT_TosaTest.Models
             }
             get { return _cameraName; }
         }
+
+        public override string ToString()
+        {
+            return CameraName;
+        }
         public event PropertyChangedEventHandler PropertyChanged;
+
     }
 }

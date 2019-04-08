@@ -131,16 +131,14 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0" Grid.RowSpan="2">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <halcon:HWindowControlWPF Name="Cam1" Grid.Row="0"  Margin="1"/>
-            <halcon:HWindowControlWPF Name="Cam2" Grid.Row="1"  Margin="1"/>
-        </Grid>
-        <Grid Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
+        <halcon:HWindowControlWPF Name="Cam1" Margin="1"/>
+        <halcon:HWindowControlWPF Name="Cam2" Grid.Row="1"  Margin="1"/>
+        <halcon:HWindowControlWPF Name="Cam3" Grid.Column="1" Margin="1"/>
+        <Grid Grid.Row="1" Grid.Column="1" Background="Black" Margin="1"/>
+        <Grid Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100"/>
                 <RowDefinition MinHeight="50"/>
@@ -157,7 +155,7 @@
                     <ColumnDefinition Width="80"/>
                     <ColumnDefinition Width="80"/>
                     <ColumnDefinition Width="80"/>
-   
+
                 </Grid.ColumnDefinitions>
 
                 <ComboBox Grid.Column="3" Grid.ColumnSpan="2" Height="40" Margin="5" SelectedIndex="0" SelectedItem="{Binding CurAlignerTypeString, Mode=OneWayToSource}" 
@@ -165,11 +163,11 @@
                 <Button Grid.Column="5" Height="40" Margin="5" Background="{StaticResource ThemColor}" Style="{StaticResource RoundButtonStyle1}" Content="开始耦合" Command="{Binding CommandStartAlign}"/>
                 <Button Grid.Column="6" Height="40" Margin="5" Background="{StaticResource ThemColor}" Style="{StaticResource RoundButtonStyle1}" Content="停止耦合" Command="{Binding CommandStopAlign}"/>
                 <Button Grid.Column="7" Height="40" Margin="5" Background="{StaticResource ThemColor}" Style="{StaticResource RoundButtonStyle1}" Content="回原点" Command="{Binding CommandHome}"/>
-                <Grid Grid.ColumnSpan="7" VerticalAlignment="Bottom" Margin="5">
+                <Grid Grid.ColumnSpan="9" VerticalAlignment="Bottom" Margin="5">
                     <Line X1="3" Y1="1" X2="1500" Y2="1" Stroke="{StaticResource ThemColor}" StrokeThickness="2"/>
                 </Grid>
             </Grid>
-            
+
             <UserCtrl:UC_TeachBox Grid.Row="1" Margin="5,5,5,20"/>
             <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" Background="{StaticResource ThemColor}" />
             <Grid Grid.Row="3" Margin="5,0,5,25">
@@ -229,10 +227,8 @@
                     </TabItem>
                 </TabControl>
                 <Image Source="../Images/Pause_128.png" Width="128" Height="128" Opacity="0.5" Visibility="{Binding IsPaused, Converter={StaticResource Bool2Visibility}}"/>
-                
+
             </Grid>
         </Grid>
-        
-       
     </Grid>
 </UserControl>

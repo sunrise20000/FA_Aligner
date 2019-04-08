@@ -15,8 +15,7 @@
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
              IsVisibleChanged="UserControl_IsVisibleChanged"
-             SizeChanged="UserControl_SizeChanged"
-             d:DesignHeight="800" d:DesignWidth="800">
+             d:DesignHeight="800" d:DesignWidth="1200">
     <UserControl.Resources>
         <ResourceDictionary>
             <Storyboard x:Key="ModelSb"/>
@@ -116,11 +115,6 @@
                             </Button>
                             <ComboBox Name="Cb_Cameras" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="1" Margin="5,12,5,12" ItemsSource="{Binding CameraCollection}" SelectedIndex="{Binding CurrentSelectedCamera}" 
                           IsEnabled="{Binding CamSnapState,ConverterParameter=ComboBoxCameras,Converter={StaticResource EnumCamSnapState2SnapButtonEnable}}" SelectionChanged="Cb_Cameras_SelectionChanged">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="SelectionChanged">
-                                        <cmd:EventToCommand Command="{Binding UpdateRoiAndModel}" CommandParameter="{Binding SelectedIndex,ElementName=Cb_Cameras}"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -156,9 +150,30 @@
                 </wfi:WindowsFormsHost>
             </TabItem>
             <TabItem Header="相机标定">
-                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="500"/>
+                    </Grid.ColumnDefinitions>
+                    <halcon:HWindowControlWPF Name="CalibrationWindow"/>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="350"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <ComboBox Margin="5" Name="cbCamList" SelectedIndex="0" ItemsSource="{Binding CameraCollection}"/>
+                        <Button Grid.Column="1" Margin="5" Style="{StaticResource RoundButtonStyle1}" Background="{StaticResource ThemColor}" Content="执行标定" Command="{Binding CommandDoCalibration}" CommandParameter="{Binding Text,ElementName=cbCamList}"/>
+                        <Button Grid.Row="1" Grid.Column="0" Margin="5" Style="{StaticResource RoundButtonStyle1}" Background="{StaticResource ThemColor}" Content="获取图像坐标" Command="{Binding CommandGetImagePoint}"/>
+                        <Button Grid.Row="1" Grid.Column="1" Margin="5" Style="{StaticResource RoundButtonStyle1}" Background="{StaticResource ThemColor}" Content="获取机械坐标" Command="{Binding CommandGetMachinePoint}"/>
+                        <DataGrid Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding CalibrationDt.DefaultView}" Name="dataGridCalibration" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"/>
+                    </Grid>
+                </Grid>
             </TabItem>
         </TabControl>
-        
     </Grid>
 </UserControl>

@@ -13,6 +13,7 @@ using JPT_TosaTest.Vision.ProcessStep;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,7 +35,9 @@ namespace JPT_TosaTest.ViewModel
         private Task GrabTask = null;
         public EnumCamSnapState _camSnapState;
         private string PATH_DEFAULT_IMAGEPATH = @"C:\";
-
+        private readonly string PATH_CALIB = @"VisionData\Calib\";
+        private readonly string PATH_MODEL = @"VisionData\Model\";
+        private HalconVision Vision = HalconVision.Instance;
         public enum EnumRoiModelType : int
         {
             ROI,
@@ -53,12 +56,17 @@ namespace JPT_TosaTest.ViewModel
             foreach (var it in CamListFind)
             {
                 bool bOpen = HalconVision.Instance.OpenCam(i++);
-                CameraCollection.Add(new CameraItem() { CameraName = it.Key, StrCameraState = bOpen ? "Connected" : "DisConnected" });
+                CameraCollection.Add(new CameraItem() { CameraName = it.Key, StrCameraState = bOpen ? EnumCamState.Connected : EnumCamState.DisConnected });
             }
 
             foreach (var err in ErrorList)
                 Messenger.Default.Send<string>(err, "Error");
-                    
+
+
+            //初始化标定窗口的DataTable
+            string[] Headers = new string[] { "Name", "CamX", "CamY", "X", "Y" };
+            foreach (var header in Headers)
+                CalibrationDt.Columns.Add(header);
 
             #endregion          
         }
@@ -82,7 +90,24 @@ namespace JPT_TosaTest.ViewModel
             }
             CamSnapState = EnumCamSnapState.IDLE;
         }
-       
+        private void UpdateCalibratePoint()
+        {
+            if (CalibrationDt.Rows.Count == 0)
+            {
+                for (int i = 0; i < 9; i++)
+                {
+                    var dr = CalibrationDt.NewRow();
+                    dr[0] = $"点{i}";
+                    dr[1] = dr[2] = dr[3] = dr[4] = 0;
+                    CalibrationDt.Rows.Add(dr);
+                }      
+            }
+            else if(CalibrationDt.Rows.Count==9)
+            {
+
+            }
+
+        }
 
         #endregion
 
@@ -125,6 +150,10 @@ namespace JPT_TosaTest.ViewModel
             get { return _saveImageType; }
         }
 
+        /// <summary>
+        /// 标定的时候需要用到
+        /// </summary>
+        public DataTable CalibrationDt { get; set; } = new DataTable();
         public ObservableCollection<CameraItem> CameraCollection
         {
             get;
@@ -225,6 +254,38 @@ namespace JPT_TosaTest.ViewModel
                 });
             }
         }
+
+        public RelayCommand<string> CommandDoCalibration
+        {
+            get
+            {
+                return new RelayCommand<string>(CamName =>
+                {
+                    
+                });
+            }
+        }
+        public RelayCommand CommandGetImagePoint
+        {
+            get
+            {
+                return new RelayCommand(() =>
+                {
+
+                });
+            }
+        }
+        public RelayCommand CommandGetMachinePoint
+        {
+            get
+            {
+                return new RelayCommand(() =>
+                {
+
+                });
+            }
+        }
+
 
     }
     #endregion

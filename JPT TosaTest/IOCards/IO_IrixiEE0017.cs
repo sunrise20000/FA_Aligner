@@ -6,7 +6,8 @@ using JPT_TosaTest.Config.HardwareManager;
 using M12;
 using M12.Definitions;
 using JPT_TosaTest.MotionCards;
-
+using System.Threading.Tasks;
+using System.Threading;
 namespace JPT_TosaTest.IOCards
 {
     public class IO_IrixiEE0017 : IIO
@@ -14,6 +15,9 @@ namespace JPT_TosaTest.IOCards
         private Comport comport = null;
         private Controller _controller = null;
         private UInt16? OutputValue=0;
+        private Task TaskReadDin = null;
+        private CancellationTokenSource cts = null;
+
         public IOCardCfg ioCfg { get; set; }
 
         public event IOStateChange OnIOStateChanged;
@@ -22,6 +26,11 @@ namespace JPT_TosaTest.IOCards
 
         public bool Deinit()
         {
+            if (cts != null)
+            {
+                cts.Cancel();
+                cts = null;
+            }
             if (comport != null)
                 return comport.ClosePort();
             return false;
@@ -40,6 +49,22 @@ namespace JPT_TosaTest.IOCards
                 {
                     _controller = M12Wrapper.CreateInstance(portCfg.Port, portCfg.BaudRate);
                     _controller.Open();
+                    if (TaskReadDin == null || TaskReadDin.IsCanceled || TaskReadDin.IsCompleted)
+                    {
+                        cts = new CancellationTokenSource();
+                        TaskReadDin = new Task(() => {
+                            ushort olddata = 0;
+                            while (!cts.IsCancellationRequested)
+                            {
+                                ReadIoInWord(out int value);
+                                if (olddata != value)
+                                {
+                                    OnIOStateChanged?.Invoke(this, EnumIOType.OUTPUT, olddata, (ushort)value);
+                                    olddata = (ushort)value;
+                                }
+                            }
+                        }, cts.Token);
+                    }
                     return true;
                 }
             }

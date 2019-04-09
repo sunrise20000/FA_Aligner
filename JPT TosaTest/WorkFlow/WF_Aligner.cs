@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using JPT_TosaTest.Vision;
+using VisionLib;
 using JPT_TosaTest.MotionCards;
 using JPT_TosaTest.IOCards;
 using JPT_TosaTest.Model;
@@ -17,6 +17,7 @@ using JPT_TosaTest.WorkFlow.CmdArgs;
 using JPT_TosaTest.Config.ProcessParaManager;
 using JPT_TosaTest.Classes.WatchDog;
 using JPT_TosaTest.WorkFlow.WorkFlow;
+using HalconModle;
 
 namespace JPT_TosaTest.WorkFlow
 {
@@ -47,6 +48,16 @@ namespace JPT_TosaTest.WorkFlow
         WFPointModel PtCamTopSnapPos;       //上相机拍照点
         const int IN_STEP_PLC = 0, IN_STEP_FA = 1;
         const int OUT_STEP_PLC = 0, OUT_STEP_FA = 1;
+
+        ShapeModle ModelFindTool = new ShapeModle();
+        HalconVision Vision = HalconVision.Instance;
+
+        readonly int CAM_UP = 0;
+        readonly int CAM_DOWN = 1;
+        readonly int CAM_SIDE = 2;
+
+        const string PATH_MODEL_UP = @"VisionData/Model/ModelUp";
+        const string FILE_CALIB_CAM_UP = @"VisionData/Calib/CamUp.tup";
         #endregion
 
         public override bool UserInit()
@@ -211,14 +222,22 @@ namespace JPT_TosaTest.WorkFlow
                         break;
                     case 5:
                         //Snap
+                        var Image=Vision.GrabImage(CAM_DOWN, true, false);
+                        ModelFindTool.BackImage = Image;
+                        ModelFindTool.LoadModle(PATH_MODEL_UP);
+                        var Result=ModelFindTool.FindSimple();
+
                         nSubStep = 6;
                         break;
+                    
                     case 6:
-                        //Rotate
+                        //旋转
                         return;
+                   
                 }
             }
         }
+
         private void AdjustXY()
         {
             var dog = new Dog(30000);
@@ -252,15 +271,22 @@ namespace JPT_TosaTest.WorkFlow
                         break;
                     case 5:
                         //Snap
+                        var Image = Vision.GrabImage(CAM_DOWN, true, false);
+                        ModelFindTool.BackImage = Image;
+                        ModelFindTool.LoadModle(PATH_MODEL_UP);
+                        var Result = ModelFindTool.FindSimple();
+                        
                         nSubStep = 6;
                         break;
                     case 6:
                         //MoveXY
+
                         return;
                 }
             }
         }
 
+        //精确调整
         private void AdjustXYRel()
         {
             var dog = new Dog(30000);
@@ -294,10 +320,19 @@ namespace JPT_TosaTest.WorkFlow
                         break;
                     case 5:
                         //Snap
+                        Vision.GrabImage(CAM_UP, true);
                         nSubStep = 6;
                         break;
                     case 6:
-                        //MoveXY
+                        //Rotate
+                        nSubStep = 7;
+                        break;
+                    case 7:
+                        //Snap
+                        nSubStep = 8;
+                        break;
+                    case 8:
+                        //MoveXYRel
                         return;
                 }
             }

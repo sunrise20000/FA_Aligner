@@ -1,8 +1,6 @@
 ﻿using JPT_TosaTest.Model;
-using JPT_TosaTest.Model.ToolData;
 using JPT_TosaTest.ViewModel;
-using JPT_TosaTest.Vision;
-using JPT_TosaTest.Vision.ProcessStep;
+using VisionLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;

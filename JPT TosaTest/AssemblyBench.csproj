@@ -168,6 +168,10 @@
     </Reference>
     <Reference Include="UIAutomationProvider" />
     <Reference Include="UIAutomationTypes" />
+    <Reference Include="VisionLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\VisionLib.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -234,7 +238,6 @@
     <Compile Include="Converter\Bool2LimitColor.cs" />
     <Compile Include="Converter\Bool2Visibility.cs" />
     <Compile Include="Converter\Double2Text.cs" />
-    <Compile Include="Converter\EdgeTool2Image.cs" />
     <Compile Include="Converter\EnumCamSnapState2SnapButtonEnable.cs" />
     <Compile Include="Converter\Int2BackgroundBrush.cs" />
     <Compile Include="Converter\Int2String.cs" />
@@ -269,12 +272,9 @@
     <Compile Include="Model\ModelItem.cs" />
     <Compile Include="Model\RoiModelBase.cs" />
     <Compile Include="Config\HardwareManager\AxisSetting.cs" />
-    <Compile Include="Model\ToolData\CircleToolData.cs" />
-    <Compile Include="Model\ToolData\LineToolData.cs" />
-    <Compile Include="Model\ToolData\PairToolData.cs" />
-    <Compile Include="Model\ToolData\FlagToolData.cs" />
-    <Compile Include="Model\ToolData\ToolDataBase.cs" />
     <Compile Include="Model\WFPointModel.cs" />
+    <Compile Include="MotionCards\AxisStateChangeArgs.cs" />
+    <Compile Include="MotionCards\ErrorOccurArgs.cs" />
     <Compile Include="MotionCards\IMotion.cs" />
     <Compile Include="MotionCards\M12Wrapper.cs" />
     <Compile Include="MotionCards\MotionMgr.cs" />
@@ -337,17 +337,6 @@
     <Compile Include="ViewModel\SettingViewModel.cs" />
     <Compile Include="ViewModel\TeachBoxViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="Vision\HalconVision.cs" />
-    <Compile Include="Vision\Light\LightBase.cs" />
-    <Compile Include="Vision\Light\Light_JK_PWD6024.cs" />
-    <Compile Include="Vision\Light\LigtMgr.cs" />
-    <Compile Include="Vision\ProcessStep\StepCalibImage.cs" />
-    <Compile Include="Vision\ProcessStep\StepDrawFlag.cs" />
-    <Compile Include="Vision\ProcessStep\StepShowFlag.cs" />
-    <Compile Include="Vision\ProcessStep\StepFindeLineByModel.cs" />
-    <Compile Include="Vision\ProcessStep\StepFindModel.cs" />
-    <Compile Include="Vision\VisionDataOperateSet.cs" />
-    <Compile Include="Vision\ProcessStep\VisionProcessStepBase.cs" />
     <Compile Include="WorkFlow\CmdArgs\CmdAlignArgs.cs" />
     <Compile Include="WorkFlow\CmdArgs\CmdArgsBase.cs" />
     <Compile Include="WorkFlow\CmdArgs\CmdPreAlignmentArgs.cs" />
@@ -562,10 +551,6 @@
     <Resource Include="Images\Monitor.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\更新之后的M12\M12LIB__csharp-based\M12\M12.csproj">
-      <Project>{0d53d43a-73de-4ab8-9549-e9c06675928f}</Project>
-      <Name>M12</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AxisParaLib\AxisParaLib.csproj">
       <Project>{550d7643-117d-4b91-8da7-56a138558edb}</Project>
       <Name>AxisParaLib</Name>
@@ -581,6 +566,10 @@
     <ProjectReference Include="..\PackageParse\PackageParse.csproj">
       <Project>{d6e8da7f-3970-4ad8-b24b-0b918fe64c80}</Project>
       <Name>PackageParse</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\更新之后的M12\M12LIB__csharp-based\M12\M12.csproj">
+      <Project>{0d53d43a-73de-4ab8-9549-e9c06675928f}</Project>
+      <Name>M12</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

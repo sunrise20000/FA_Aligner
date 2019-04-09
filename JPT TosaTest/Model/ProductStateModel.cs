@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace JPT_TosaTest.Model
 {
-    public class ProductStateModel :ViewModelBase, INotifyPropertyChanged
+    public class ProductStateModel :ViewModelBase
     {
         private bool _isChecked = true;
 
@@ -26,7 +26,7 @@ namespace JPT_TosaTest.Model
                 if (value != _isChecked)
                 {
                     _isChecked = value;
-                    RaisePropertyChange();
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -41,12 +41,6 @@ namespace JPT_TosaTest.Model
                     IsChecked = !IsChecked;
                 });
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void RaisePropertyChange([CallerMemberName]string PropertyName="")
-        {
-            PropertyChanged?.Invoke(this,new PropertyChangedEventArgs(PropertyName));
         }
     }
 }

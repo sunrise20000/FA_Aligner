@@ -4,12 +4,9 @@ using GalaSoft.MvvmLight.Messaging;
 using JPT_TosaTest.Classes;
 using JPT_TosaTest.Config;
 using JPT_TosaTest.Model;
-using JPT_TosaTest.Model.ToolData;
 using JPT_TosaTest.Models;
 using JPT_TosaTest.UserCtrl;
-using JPT_TosaTest.Vision;
-using JPT_TosaTest.Vision.Light;
-using JPT_TosaTest.Vision.ProcessStep;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,6 +19,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media.Animation;
+using VisionLib;
+using static VisionLib.VisionDefinitions;
 
 namespace JPT_TosaTest.ViewModel
 {
@@ -56,7 +55,7 @@ namespace JPT_TosaTest.ViewModel
             foreach (var it in CamListFind)
             {
                 bool bOpen = HalconVision.Instance.OpenCam(i++);
-                CameraCollection.Add(new CameraItem() { CameraName = it.Key, StrCameraState = bOpen ? EnumCamState.Connected : EnumCamState.DisConnected });
+                CameraCollection.Add(new CameraItem() { CameraName = it.NameForVision, StrCameraState = bOpen ? EnumCamState.Connected : EnumCamState.DisConnected });
             }
 
             foreach (var err in ErrorList)
@@ -74,7 +73,7 @@ namespace JPT_TosaTest.ViewModel
 
         ~CamDebugViewModel()
         {
-            HalconVision.Instance.CloseCamera();
+            HalconVision.Instance.CloseAllCamera();
             Messenger.Default.Unregister<string>("UpdateModelFiles");
 
         }
@@ -248,7 +247,7 @@ namespace JPT_TosaTest.ViewModel
                     if (ofd.ShowDialog() == DialogResult.OK)
                     {
                         PATH_DEFAULT_IMAGEPATH = ofd.FileName;
-                        HalconVision.Instance.OpenImageInWindow(CurrentSelectedCamera, PATH_DEFAULT_IMAGEPATH, hWindow);
+                        HalconVision.Instance.OpenImageInWindow(PATH_DEFAULT_IMAGEPATH, hWindow);
                     }
 
                 });

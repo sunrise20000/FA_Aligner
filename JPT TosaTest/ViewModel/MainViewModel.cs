@@ -15,7 +15,7 @@ using System.Windows.Controls;
 using JPT_TosaTest.Classes;
 using JPT_TosaTest.MotionCards;
 using AxisParaLib.UnitManager;
-using JPT_TosaTest.Vision;
+using VisionLib;
 using System.IO;
 using GalaSoft.MvvmLight.Ioc;
 using JPT_TosaTest.WorkFlow.WorkFlow;

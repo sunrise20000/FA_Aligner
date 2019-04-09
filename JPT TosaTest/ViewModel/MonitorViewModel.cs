@@ -126,12 +126,12 @@ namespace JPT_TosaTest.ViewModel
                     for (int i = 0; i < motionDic.Value.MAX_AXIS - motionDic.Value.MIN_AXIS + 1; i++)
                     {
                         motionDic.Value.GetAxisState(i, out AxisArgs args);
-                        Value_OnAxisStateChanged(motionDic.Value, i, args);
+                        Value_OnAxisStateChanged(motionDic.Value, new AxisStateChangeArgs() {  AxisNoBaseZero=i, axisState=args});
                     }
                 }
 
                 //订阅
-                motionDic.Value.OnAxisStateChanged += Value_OnAxisStateChanged; ;
+                motionDic.Value.OnAxisStateChanged += Value_OnAxisStateChanged;
                 motionDic.Value.OnErrorOccured += Value_OnErrorOccured;
 
 
@@ -155,6 +155,7 @@ namespace JPT_TosaTest.ViewModel
 
         }
 
+       
         #region Property
 
         public ObservableCollection<IOModel> CurrentIoCardCollectionInput
@@ -255,17 +256,23 @@ namespace JPT_TosaTest.ViewModel
 
         #region Private  事件
 
-        private void Value_OnErrorOccured(IMotion sender, int ErrorCode, string ErrorMsg)
+        private void Value_OnErrorOccured(object sender,ErrorOccurArgs ErrorArgs )
         {
+            var motion = sender as IMotion;
+            int ErrorCode = ErrorArgs.ErrorCode;
+            string ErrorMsg = ErrorArgs.ErrorMsg;
             //过滤掉因为ADC引发的停止
-            if(ErrorCode!=0x83 && ErrorCode!=0x84)
-                Messenger.Default.Send<string>($"Motion{sender.motionCfg.Name} error occured:{ErrorMsg}", "Error");
+            if (ErrorCode!=0x83 && ErrorCode!=0x84)
+                Messenger.Default.Send<string>($"Motion{motion.motionCfg.Name} error occured:{ErrorMsg}", "Error");
         }
 
-        private void Value_OnAxisStateChanged(IMotion sender, int AxisNo, AxisArgs args)
+        private void Value_OnAxisStateChanged(object sender, AxisStateChangeArgs stateArgs )
         {
+            var MotionCards = sender as IMotion;
+            int AxisNo = stateArgs.AxisNoBaseZero;
+            AxisArgs args = stateArgs.axisState;
             //需要实时刷新的
-            int AxisNoTotal = AxisNo + sender.MIN_AXIS;
+            int AxisNoTotal = AxisNo + MotionCards.MIN_AXIS;
             for (int j = 0; j < ConfigMgr.Instance.HardwareCfgMgr.AxisSettings.Count(); j++)
             {
                 if (ConfigMgr.Instance.HardwareCfgMgr.AxisSettings[j].AxisNo == AxisNoTotal)

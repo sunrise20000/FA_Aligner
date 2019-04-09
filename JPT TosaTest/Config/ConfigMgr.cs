@@ -7,7 +7,7 @@ using JPT_TosaTest.Config.UserManager;
 using JPT_TosaTest.Instrument;
 using JPT_TosaTest.IOCards;
 using JPT_TosaTest.MotionCards;
-using JPT_TosaTest.Vision.Light;
+using VisionLib;
 using JPT_TosaTest.WorkFlow;
 using Newtonsoft.Json;
 using System;
@@ -73,7 +73,6 @@ namespace JPT_TosaTest.Config
             IMotion motionBase = null;
             IIO ioBase = null;
             InstrumentBase instrumentBase = null;
-            LightBase lightBase = null;
 
             Type hardWareMgrType = HardwareCfgMgr.GetType();
 
@@ -241,48 +240,6 @@ namespace JPT_TosaTest.Config
                     case "Cameras":
                         var cameraCfgs = it.GetValue(HardwareCfgMgr) as CameraCfg[];
                         break;
-                    case "Lights":
-                        var lightCfgs=it.GetValue(HardwareCfgMgr) as LightCfg[];
-                        foreach (var lightCfg in lightCfgs)
-                        {
-                            if (lightCfg.Enabled)
-                            {
-                                lightBase = hardWareMgrType.Assembly.CreateInstance("JPT_TosaTest.Vision.Light." + lightCfg.Name.Substring(0, lightCfg.Name.IndexOf("[")), true, BindingFlags.CreateInstance, null, null, null, null) as LightBase;
-                                if (lightBase != null)
-                                {  
-                                    if (lightCfg.ConnectMode.ToLower() != "none")
-                                    {
-                                        var p = hardWareMgrType.GetProperty($"{lightCfg.ConnectMode}s");
-                                        var portCfgs = p.GetValue(HardwareCfgMgr) as ICommunicationPortCfg[];
-                                        var ports = from portCfg in portCfgs where portCfg.PortName == lightCfg.PortName select portCfg;
-                                        if (ports != null && ports.Count() > 0)
-                                        {
-                                            if (lightBase.Init(lightCfg, ports.ElementAt(0))) //如果不需要初始化就直接加入字典
-                                                LigtMgr.Instance.AddLight(lightCfg.Name, lightBase);
-                                            else
-                                                errList.Add($"{lightCfg.Name} init failed");
-                                        }
-                                        else
-                                        {
-                                            errList.Add($"{lightCfg.Name} init failed");
-                                        }
-                                    }
-                                    else //无需选择通信端口
-                                    {
-                                        if (lightBase.Init(lightCfg, null))
-                                            LigtMgr.Instance.AddLight(lightCfg.Name, lightBase);
-                                        else
-                                            errList.Add($"{lightCfg.Name} init failed");
-                                    }
-                                }
-                                else
-                                {
-                                    errList.Add($"{lightCfg.Name} Create instanse failed");
-                                }
-                            }
-                        }
-                        break;
-                   
                     default:
                         break;
 

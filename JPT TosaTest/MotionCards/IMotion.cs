@@ -8,13 +8,13 @@ using AxisParaLib;
 
 namespace JPT_TosaTest.MotionCards
 {
-    public delegate void AxisStateChange(IMotion sender, int AxisNo, AxisArgs axisState);
-    public delegate void ErrorOccur(IMotion sender, int ErrorCode, string ErrorMsg);
+    //public delegate void AxisStateChange(IMotion sender, int AxisNo, AxisArgs axisState);
+    //public delegate void ErrorOccur(IMotion sender, int ErrorCode, string ErrorMsg);
 
     public interface IMotion
     {
-        event AxisStateChange OnAxisStateChanged;
-        event ErrorOccur OnErrorOccured;
+        event EventHandler<AxisStateChangeArgs> OnAxisStateChanged;
+        event EventHandler<ErrorOccurArgs>  OnErrorOccured;
 
         MotionCardCfg motionCfg { get; set; }
 

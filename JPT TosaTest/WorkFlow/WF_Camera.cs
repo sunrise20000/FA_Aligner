@@ -3,7 +3,7 @@ using JPT_TosaTest.Config.SoftwareManager;
 using JPT_TosaTest.IOCards;
 using JPT_TosaTest.MotionCards;
 using JPT_TosaTest.MotionCards.IrixiCommand;
-using JPT_TosaTest.Vision;
+using VisionLib;
 using JPT_TosaTest.WorkFlow.WorkFlow;
 using M12.Base;
 using System;

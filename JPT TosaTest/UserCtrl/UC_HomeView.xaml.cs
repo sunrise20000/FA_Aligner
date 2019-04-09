@@ -1,5 +1,5 @@
 ﻿using JPT_TosaTest.ViewModel;
-using JPT_TosaTest.Vision;
+using VisionLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;

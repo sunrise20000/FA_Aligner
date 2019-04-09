@@ -54,8 +54,10 @@ namespace JPT_TosaTest.MotionCards
         //private IrixiEE0017 _controller=null;
         private M12Wrapper _controller = null;
 
-        public event AxisStateChange OnAxisStateChanged;
-        public event ErrorOccur OnErrorOccured;
+        //public event AxisStateChange OnAxisStateChanged;
+        //public event ErrorOccur OnErrorOccured;
+        public event EventHandler<AxisStateChangeArgs> OnAxisStateChanged;
+        public event EventHandler<ErrorOccurArgs> OnErrorOccured;
 
         public MotionCardCfg motionCfg { get; set; }
         public int MAX_AXIS { get; set; }
@@ -557,13 +559,13 @@ namespace JPT_TosaTest.MotionCards
             AxisArgsList[AxisNo].IsHomed = e.IsHomed;
             AxisArgsList[AxisNo].IsHomedAndNotBusy = e.IsHomed && (!e.IsBusy);
             AxisArgsList[AxisNo].CurAbsPosPuse = e.AbsPosition;
-            OnAxisStateChanged?.Invoke(this, AxisNo, AxisArgsList[AxisNo]);
+            OnAxisStateChanged?.Invoke(this, new AxisStateChangeArgs() {  AxisNoBaseZero= AxisNo , axisState= AxisArgsList[AxisNo] });
             if (AxisArgsList[AxisNo].ErrorCode != (byte)e.Error)
             {
                 AxisArgsList[AxisNo].ErrorCode = (byte)e.Error;
                 if ((byte)e.Error != 0)
                 {
-                    OnErrorOccured?.Invoke(this, (int)e.Error, ParseErrorCode((int)e.Error));
+                    OnErrorOccured?.Invoke(this,new ErrorOccurArgs() {  ErrorCode= (int)e.Error , ErrorMsg= ParseErrorCode((int)e.Error)} );
                 }
             }
         }

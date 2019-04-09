@@ -1,10 +1,11 @@
-﻿using JPT_TosaTest.Vision;
+﻿using VisionLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using static VisionLib.VisionDefinitions;
 
 namespace JPT_TosaTest.Model
 {

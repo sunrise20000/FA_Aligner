@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AxisParaLib", "AxisParaLib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HalconModle", "HalconModle\HalconModle.csproj", "{6B1E1CB0-1FE6-4D7D-B7BA-07E4DEBD6F3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M12", "..\更新之后的M12\M12LIB__csharp-based\M12\M12.csproj", "{0D53D43A-73DE-4AB8-9549-E9C06675928F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M12", "更新之后的M12\M12LIB__csharp-based\M12\M12.csproj", "{0D53D43A-73DE-4AB8-9549-E9C06675928F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

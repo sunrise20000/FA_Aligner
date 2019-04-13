@@ -25,25 +25,48 @@ namespace JPT_TosaTest.WorkFlow
     {
         public enum STEP : int
         {
-            Init,   //回机械原点
 
-            AdjustAngle,    //计算并调整角度
-           
-            AdjustXY, //计算并调整距离
+            #region INIT  回机械原点
+            INIT,
+            #endregion
 
-            AdjustXYRel,  //调整相对位置
+            #region TOUCH,    //touch
+            TOUCH,      //移动X轴
+            WaitTochXOk,    //等待TouchSensor到位
+            MoveBack,       //后退几个微米，根据工艺来确定
+            #endregion
 
-            DoBlindSearchAlign, //耦合
+            #region ROUGHSCAN, //粗扫
+            ROUGHSCAN, //粗扫
+            MoveToMaxPositionRoughScan,
+            ShowResultInGUIRoughScan,
+            #endregion
 
+            #region FINESCAN,  //精扫
+            FINESCAN,  //精扫
+            MoveToMaxPositionFineScan,
+            ShowResultInGUIFineScan,
+            #endregion
+
+            #region CALCLOSS, //计算差损
+            CALCLOSS, //计算差损
+            ShowResultLoss,
+            #endregion
+
+            #region DO_NOTHING
             DO_NOTHING,
+            #endregion
+
+            #region EXIT
             EXIT,
+            #endregion
         }
 
         private Motion_IrixiEE0017 motion = null;
         private IO_IrixiEE0017 io = null;
         private const int AXIS_X = 0, AXIS_Y = 1, AXIS_Z = 2, AXIS_R = 4;
         STEP Step;
-        #region PointDefine
+
         WFPointModel PtCamBottomSnapPos;    //下相机拍照点
         WFPointModel PtCamTopSnapPos;       //上相机拍照点
         const int IN_STEP_PLC = 0, IN_STEP_FA = 1;
@@ -53,22 +76,21 @@ namespace JPT_TosaTest.WorkFlow
         HalconVision Vision = HalconVision.Instance;
 
         readonly int CAM_UP = 0;
-        readonly int CAM_DOWN = 1;
-        readonly int CAM_SIDE = 2;
+        readonly int CAM_BACK = 1;
 
         const string PATH_MODEL_UP = @"VisionData/Model/ModelUp";
         const string FILE_CALIB_CAM_UP = @"VisionData/Calib/CamUp.tup";
-        #endregion
+
 
         public override bool UserInit()
         {
             motion = MotionMgr.Instance.FindMotionCardByAxisIndex(1) as Motion_IrixiEE0017;
             io = IOCardMgr.Instance.FindIOCardByCardName("IO_IrixiEE0017[0]") as IO_IrixiEE0017;
             bool bRet = motion != null && io != null && LoadPoint();
-            io.OnIOStateChanged += Io_OnIOStateChanged;
-
+            
             if (!bRet)
                 ShowInfo($"初始化失败");
+            io.OnIOStateChanged += Io_OnIOStateChanged;
             return bRet;
         }
 
@@ -83,9 +105,10 @@ namespace JPT_TosaTest.WorkFlow
             try
             {
                 ClearAllStep();
-                PushStep(STEP.Init);
+                PushStep(STEP.INIT);
                 while (!cts.IsCancellationRequested)
                 {
+
                     int n = PeekStep();
                     var b = Enum.IsDefined(typeof(STEP), n);
                     Thread.Sleep(10);
@@ -94,28 +117,31 @@ namespace JPT_TosaTest.WorkFlow
                     Step = (STEP)n;
                     switch (Step)
                     {
-                        case STEP.Init: //初始化
+                        case STEP.INIT: 
                             HomeAll();
                             PopStep();
                             break;
-                        case STEP.AdjustAngle:  //调整角度
-                            AdjectAngle();
+                        case STEP.TOUCH:  
+                            
                             PopStep();
                             break;
-                        case STEP.AdjustXY:   //调整距离
-                            AdjustXY();
+                        case STEP.ROUGHSCAN:   
+                          
                             PopStep();
                             break;
-                        case STEP.AdjustXYRel:    //调整相对位置
-                            AdjustXYRel();
+                        case STEP.FINESCAN:   
+                           
                             PopStep();
                             break;
    
-                        case STEP.DoBlindSearchAlign:
-                            DoBlindSearchAlignment(null);
+                        case STEP.CALCLOSS:
+                            PopStep();
+                            break;
+                        case STEP.DO_NOTHING:
                             PopStep();
                             break;
                         case STEP.EXIT:
+                            PopStep();
                             return 0;
                         default:
                             break;
@@ -184,160 +210,8 @@ namespace JPT_TosaTest.WorkFlow
                 }
             }
             return bRet;
-        }
-
-        /// <summary>
-        /// 调整角度
-        /// </summary>
-        private void AdjectAngle()
-        {
-            var dog = new Dog(30000);
-            nSubStep = 1;
-            while (!cts.IsCancellationRequested)
-            {
-                dog.CheckTimeOut("调整角度超时");
-                switch (nSubStep)
-                {
-                    //移动到拍照位置
-                    case 1:
-                        motion.MoveAbs(AXIS_Z, 1000, 5, 0);
-                        break;
-                    case 2:
-                        if (motion.IsNormalStop(AXIS_Z))
-                        {
-                            nSubStep = 3;
-                        }
-                        break;
-                    case 3:
-                        motion.MoveAbs(AXIS_X, 1000, 5, PtCamBottomSnapPos.X);
-                        motion.MoveAbs(AXIS_Y, 1000, 5, PtCamBottomSnapPos.Y);
-                        nSubStep = 4;
-                        break;
-                    case 4:
-                        if (motion.IsNormalStop(AXIS_X) && motion.IsNormalStop(AXIS_Y))
-                        {
-                            motion.MoveAbs(AXIS_Y, 1000, 5, PtCamBottomSnapPos.Z);
-                            nSubStep = 5;
-                        }
-                        break;
-                    case 5:
-                        //Snap
-                        var Image=Vision.GrabImage(CAM_DOWN, true, false);
-                        ModelFindTool.BackImage = Image;
-                        ModelFindTool.LoadModle(PATH_MODEL_UP);
-                        var Result=ModelFindTool.FindSimple();
-
-                        nSubStep = 6;
-                        break;
-                    
-                    case 6:
-                        //旋转
-                        return;
-                   
-                }
-            }
-        }
-
-        private void AdjustXY()
-        {
-            var dog = new Dog(30000);
-            nSubStep = 1;
-            while (!cts.IsCancellationRequested)
-            {
-                dog.CheckTimeOut("调整角度超时");
-                switch (nSubStep)
-                {
-                    //移动到拍照位置
-                    case 1:
-                        motion.MoveAbs(AXIS_Z, 1000, 5, 0);
-                        break;
-                    case 2:
-                        if (motion.IsNormalStop(AXIS_Z))
-                        {
-                            nSubStep = 3;
-                        }
-                        break;
-                    case 3:
-                        motion.MoveAbs(AXIS_X, 1000, 5, PtCamBottomSnapPos.X);
-                        motion.MoveAbs(AXIS_Y, 1000, 5, PtCamBottomSnapPos.Y);
-                        nSubStep = 4;
-                        break;
-                    case 4:
-                        if (motion.IsNormalStop(AXIS_X) && motion.IsNormalStop(AXIS_Y))
-                        {
-                            motion.MoveAbs(AXIS_Y, 1000, 5, PtCamBottomSnapPos.Z);
-                            nSubStep = 5;
-                        }
-                        break;
-                    case 5:
-                        //Snap
-                        var Image = Vision.GrabImage(CAM_DOWN, true, false);
-                        ModelFindTool.BackImage = Image;
-                        ModelFindTool.LoadModle(PATH_MODEL_UP);
-                        var Result = ModelFindTool.FindSimple();
-                        
-                        nSubStep = 6;
-                        break;
-                    case 6:
-                        //MoveXY
-
-                        return;
-                }
-            }
-        }
-
-        //精确调整
-        private void AdjustXYRel()
-        {
-            var dog = new Dog(30000);
-            nSubStep = 1;
-            while (!cts.IsCancellationRequested)
-            {
-                dog.CheckTimeOut("调整角度超时");
-                switch (nSubStep)
-                {
-                    //移动到拍照位置
-                    case 1:
-                        motion.MoveAbs(AXIS_Z, 1000, 5, 0);
-                        break;
-                    case 2:
-                        if (motion.IsNormalStop(AXIS_Z))
-                        {
-                            nSubStep = 3;
-                        }
-                        break;
-                    case 3:
-                        motion.MoveAbs(AXIS_X, 1000, 5, PtCamTopSnapPos.X);
-                        motion.MoveAbs(AXIS_Y, 1000, 5, PtCamTopSnapPos.Y);
-                        nSubStep = 4;
-                        break;
-                    case 4:
-                        if (motion.IsNormalStop(AXIS_X) && motion.IsNormalStop(AXIS_Y))
-                        {
-                            motion.MoveAbs(AXIS_Y, 1000, 5, PtCamBottomSnapPos.Z);
-                            nSubStep = 5;
-                        }
-                        break;
-                    case 5:
-                        //Snap
-                        Vision.GrabImage(CAM_UP, true);
-                        nSubStep = 6;
-                        break;
-                    case 6:
-                        //Rotate
-                        nSubStep = 7;
-                        break;
-                    case 7:
-                        //Snap
-                        nSubStep = 8;
-                        break;
-                    case 8:
-                        //MoveXYRel
-                        return;
-                }
-            }
-        }
-
+        }  
+        
         /// <summary>
         /// 耦合
         /// </summary>

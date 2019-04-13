@@ -672,7 +672,7 @@ namespace JPT_TosaTest.ViewModel
             {
                 return new RelayCommand(() => {
                     var station = WorkFlowMgr.Instance.FindStationByName("WF_Aligner");
-                    station.SetCmd(STEP.Init);
+                    station.SetCmd(STEP.INIT);
                 });
             }
         }

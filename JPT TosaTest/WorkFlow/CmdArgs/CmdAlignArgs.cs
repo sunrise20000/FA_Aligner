@@ -25,11 +25,5 @@ namespace JPT_TosaTest.WorkFlow.CmdArgs
         /// </summary>
         public BlindSearchArgsF VArgs { get; set; }
 
-        public void FireFinishAlimentEvent()
-        {
-            OnAligmentFinished?.Invoke(this, QResult);
-        }
-
-        public List<Point3D> QResult { get; set; }
     }
 }

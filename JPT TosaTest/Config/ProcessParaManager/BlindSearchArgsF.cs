@@ -83,7 +83,6 @@ namespace JPT_TosaTest.Config.ProcessParaManager
                 }
             }
         }
-
         /// <summary>
         /// Get or set the move speed.
         /// </summary>
@@ -99,7 +98,6 @@ namespace JPT_TosaTest.Config.ProcessParaManager
                 }
             }
         }
-
 
         #endregion
     }

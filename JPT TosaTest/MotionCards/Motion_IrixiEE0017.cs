@@ -471,7 +471,20 @@ namespace JPT_TosaTest.MotionCards
             return true;
         }
 
-
+        public bool DoFastScan1D(int AxisNo,double Range, double Interval, double Speed, ADCChannels Channel, out List<Point2D> ScanResult)
+        {
+            ScanResult = new List<Point2D>();
+            if (AxisNo > MAX_AXIS - MIN_AXIS || AxisNo < 0)
+            {
+                return false;
+            }
+            UnitID unit = AxisNo + UnitID.U1;
+            var interval = (ushort)(Interval * AxisArgsList[AxisNo].GainFactor);
+            var speed = (byte)Speed;
+            var range = (ushort)(Range * AxisArgsList[AxisNo].GainFactor);
+            _controller.StartFast1D(unit, range, interval, speed, Channel, out ScanResult);
+            return true;
+        }
         public bool SetCurrentPos(int AxisNo, double Pos)
         {
             throw new NotImplementedException();
@@ -569,6 +582,7 @@ namespace JPT_TosaTest.MotionCards
                 }
             }
         }
+
 
 
 

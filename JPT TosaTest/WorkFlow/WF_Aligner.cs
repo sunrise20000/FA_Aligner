@@ -50,7 +50,9 @@ namespace JPT_TosaTest.WorkFlow
 
             #region CALCLOSS, //计算差损
             CALCLOSS, //计算差损
-            ShowResultLoss,
+            SwitchPowerSource,  //切换光路
+            ReadPower,          //读取功率
+            ShowResultLoss,     //计算该路差损
             #endregion
 
             #region DO_NOTHING
@@ -72,16 +74,6 @@ namespace JPT_TosaTest.WorkFlow
         const int IN_STEP_PLC = 0, IN_STEP_FA = 1;
         const int OUT_STEP_PLC = 0, OUT_STEP_FA = 1;
 
-        ShapeModle ModelFindTool = new ShapeModle();
-        HalconVision Vision = HalconVision.Instance;
-
-        readonly int CAM_UP = 0;
-        readonly int CAM_BACK = 1;
-
-        const string PATH_MODEL_UP = @"VisionData/Model/ModelUp";
-        const string FILE_CALIB_CAM_UP = @"VisionData/Calib/CamUp.tup";
-
-
         public override bool UserInit()
         {
             motion = MotionMgr.Instance.FindMotionCardByAxisIndex(1) as Motion_IrixiEE0017;
@@ -94,14 +86,15 @@ namespace JPT_TosaTest.WorkFlow
             return bRet;
         }
 
-       
-
         public WF_Aligner(WorkFlowConfig cfg) : base(cfg)
         {
 
         }
         protected override int WorkFlow()
         {
+            double CommonAcc = 500;
+            double CommonSpeed = 10;
+            List<Point3D> BlindScanResult = null;
             try
             {
                 ClearAllStep();
@@ -121,22 +114,86 @@ namespace JPT_TosaTest.WorkFlow
                             HomeAll();
                             PopStep();
                             break;
-                        case STEP.TOUCH:  
-                            
+
+                        case STEP.TOUCH:
+                            motion.SetCssThreshold(CSSCH.CH1, 1000, 1500);
+                            motion.SetCssEnable(CSSCH.CH1,true);
+                            motion.MoveAbs(AXIS_X, CommonAcc, CommonSpeed, 1000);
+                            PopAndPushStep(STEP.WaitTochXOk);
+                            break;
+                        case STEP.WaitTochXOk:
+                            if (motion.IsNormalStop(AXIS_X))
+                            {
+                                motion.MoveRel(AXIS_X, CommonAcc, CommonSpeed, 0.002);
+                                PopAndPushStep(STEP.MoveBack);
+                            }
+                            break;
+                        case STEP.MoveBack:
+                            if (motion.IsNormalStop(AXIS_X))
+                            {
+                                ClearAllStep();
+                            }
+                            break;
+
+
+                        case STEP.ROUGHSCAN:
+                            var Args = new CmdAlignArgs()
+                            {
+                                HArgs = new BlindSearchArgsF()
+                                {
+                                    AxisNoBaseZero = AXIS_Y,
+                                    Gap = 0.001,
+                                    Interval = 0.001,
+                                    Range = 0.05,
+                                },
+                                VArgs = new BlindSearchArgsF()
+                                {
+                                    AxisNoBaseZero = AXIS_Z,
+                                    Gap = 0.001,
+                                    Interval = 0.001,
+                                    Range = 0.05,
+                                },
+                            };
+                            BlindScanResult=DoBlindSearchAlignment(Args);
+                            PopAndPushStep(STEP.MoveToMaxPositionRoughScan);
+                            break;
+
+                        case STEP.MoveToMaxPositionRoughScan:
+                            if (BlindScanResult != null)
+                            {
+                                PopAndPushStep(STEP.ShowResultInGUIRoughScan);
+                            }
+                            break;
+                        case STEP.ShowResultInGUIRoughScan: //界面显示
+
                             PopStep();
                             break;
-                        case STEP.ROUGHSCAN:   
-                          
-                            PopStep();
+
+
+                        case STEP.FINESCAN:   //线扫
+                            motion.DoFastScan1D(AXIS_X, 0.01, 0.001, 10, ADCChannels.CH1, out List<Point2D> FastScanResult);
+                            PopAndPushStep(STEP.ShowResultInGUIFineScan);
                             break;
-                        case STEP.FINESCAN:   
-                           
+                        case STEP.ShowResultInGUIFineScan:
                             PopStep();
                             break;
    
-                        case STEP.CALCLOSS:
+
+
+                        case STEP.CALCLOSS: //计算差损
+                            PopAndPushStep(STEP.SwitchPowerSource);
+                            break;
+                        case STEP.SwitchPowerSource:
+                            PopAndPushStep(STEP.ReadPower);
+                            break;
+                        case STEP.ReadPower:
+                            PopAndPushStep(STEP.ShowResultLoss);
+                            break;
+                        case STEP.ShowResultLoss:
                             PopStep();
                             break;
+                       
+
                         case STEP.DO_NOTHING:
                             PopStep();
                             break;
@@ -215,15 +272,14 @@ namespace JPT_TosaTest.WorkFlow
         /// <summary>
         /// 耦合
         /// </summary>
-        private void DoBlindSearchAlignment(CmdAlignArgs CmdPara)
+        private List<Point3D> DoBlindSearchAlignment(CmdAlignArgs CmdPara)
         {
             var HArgsF = CmdPara.HArgs;
             var VArgsF = CmdPara.VArgs;
-            ShowInfo("开始耦合......");
+            ShowInfo("开始BlindSearch......");
             motion.DoBlindSearch(HArgsF,VArgsF, ADCChannels.CH2, out List<Point3D> Value);
-            CmdPara.QResult=Value;
-            CmdPara.FireFinishAlimentEvent();
-            ShowInfo("耦合完成......");
+            ShowInfo("BlindSearch完成......");
+            return Value;
         }
 
         protected bool LoadPoint()

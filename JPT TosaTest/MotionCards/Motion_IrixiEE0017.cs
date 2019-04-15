@@ -136,9 +136,9 @@ namespace JPT_TosaTest.MotionCards
         /// <param name="Speed1"></param>
         /// <param name="Speed2"></param>
         /// <returns></returns>
-        public bool Home(int AxisNo, int Dir, double Acc, double Speed1, double Speed2)    //
+        public bool Home(int AxisNo, int Dir, double Acc, double LowSpeed, double HiSpeed)    //
         {
-            HomeAsync(AxisNo, Dir, Acc, Speed1, Speed2);
+            HomeAsync(AxisNo, Dir, Acc, LowSpeed, HiSpeed);
             return true;
         }
         private async Task<bool> HomeAsync(int AxisNo, int Dir, double Acc, double LowSpeed, double HiSpeed)

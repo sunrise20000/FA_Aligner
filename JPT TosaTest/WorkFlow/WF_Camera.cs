@@ -27,7 +27,7 @@ namespace JPT_TosaTest.WorkFlow
         private const int CAM_TOP = 0, CAM_BACK = 1;
         public override bool UserInit()
         {
-            return true;
+            return false;
         }
         public WF_Camera(WorkFlowConfig cfg) : base(cfg)
         {

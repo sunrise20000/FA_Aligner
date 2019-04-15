@@ -57,6 +57,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Classes\CRC32Tests.cs" />
+    <Compile Include="Instrument\PowerMeter\CRC32Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +71,10 @@
     <ProjectReference Include="..\PackageParse\PackageParse.csproj">
       <Project>{d6e8da7f-3970-4ad8-b24b-0b918fe64c80}</Project>
       <Name>PackageParse</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\更新之后的M12\M12LIB__csharp-based\M12\M12.csproj">
+      <Project>{0D53D43A-73DE-4AB8-9549-E9C06675928F}</Project>
+      <Name>M12</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

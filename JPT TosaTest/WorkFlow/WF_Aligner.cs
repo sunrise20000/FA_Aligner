@@ -18,6 +18,7 @@ using JPT_TosaTest.Config.ProcessParaManager;
 using JPT_TosaTest.Classes.WatchDog;
 using JPT_TosaTest.WorkFlow.WorkFlow;
 using HalconModle;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace JPT_TosaTest.WorkFlow
 {
@@ -32,6 +33,8 @@ namespace JPT_TosaTest.WorkFlow
 
             #region TOUCH,    //touch
             TOUCH,      //移动X轴
+            HomeX,
+            WaitHomeXOK,
             WaitTochXOk,    //等待TouchSensor到位
             MoveBack,       //后退几个微米，根据工艺来确定
             #endregion
@@ -98,7 +101,7 @@ namespace JPT_TosaTest.WorkFlow
             try
             {
                 ClearAllStep();
-                PushStep(STEP.INIT);
+                PushStep(STEP.ROUGHSCAN);
                 while (!cts.IsCancellationRequested)
                 {
 
@@ -116,15 +119,27 @@ namespace JPT_TosaTest.WorkFlow
                             break;
 
                         case STEP.TOUCH:
-                            motion.SetCssThreshold(CSSCH.CH1, 1000, 1500);
+                            double CssOffset = 150;
+                            motion.ReadAD(ADCChannels.CH1, out double[] ValueList);
+                            motion.SetCssThreshold(CSSCH.CH1, (ushort)(ValueList[0]-CssOffset), (ushort)(ValueList[0] + CssOffset));
                             motion.SetCssEnable(CSSCH.CH1,true);
-                            motion.MoveAbs(AXIS_X, CommonAcc, CommonSpeed, 1000);
-                            PopAndPushStep(STEP.WaitTochXOk);
+                            PopAndPushStep(STEP.HomeX);
+                            break;
+                        case STEP.HomeX:
+                            motion.Home(AXIS_X, 0, CommonAcc, 2, 10);
+                            PopAndPushStep(STEP.WaitHomeXOK);
+                            break;
+                        case STEP.WaitHomeXOK:
+                            if (motion.IsHomeStop(AXIS_X))
+                            {
+                                motion.MoveAbs(AXIS_X, CommonAcc, CommonSpeed, 100);
+                                PopAndPushStep(STEP.WaitTochXOk);
+                            }
                             break;
                         case STEP.WaitTochXOk:
                             if (motion.IsNormalStop(AXIS_X))
                             {
-                                motion.MoveRel(AXIS_X, CommonAcc, CommonSpeed, 0.002);
+                                motion.MoveRel(AXIS_X, CommonAcc, CommonSpeed, -1);
                                 PopAndPushStep(STEP.MoveBack);
                             }
                             break;
@@ -142,16 +157,18 @@ namespace JPT_TosaTest.WorkFlow
                                 HArgs = new BlindSearchArgsF()
                                 {
                                     AxisNoBaseZero = AXIS_Y,
-                                    Gap = 0.001,
+                                    Gap = 0.01,
                                     Interval = 0.001,
-                                    Range = 0.05,
+                                    Range = 0.1,
+                                    Speed=10,
                                 },
                                 VArgs = new BlindSearchArgsF()
                                 {
                                     AxisNoBaseZero = AXIS_Z,
-                                    Gap = 0.001,
+                                    Gap = 0.01,
                                     Interval = 0.001,
-                                    Range = 0.05,
+                                    Range = 0.1,
+                                    Speed=10,
                                 },
                             };
                             BlindScanResult=DoBlindSearchAlignment(Args);
@@ -165,7 +182,7 @@ namespace JPT_TosaTest.WorkFlow
                             }
                             break;
                         case STEP.ShowResultInGUIRoughScan: //界面显示
-
+                            Messenger.Default.Send(BlindScanResult, "ShowResult3D");
                             PopStep();
                             break;
 
@@ -284,6 +301,7 @@ namespace JPT_TosaTest.WorkFlow
 
         protected bool LoadPoint()
         {
+            return true;
             PtCamBottomSnapPos = WorkFlowMgr.Instance.GetPoint("下相机拍照位置");
             PtCamTopSnapPos = WorkFlowMgr.Instance.GetPoint("上相机拍照位置");
             return PtCamBottomSnapPos!=null;
@@ -312,6 +330,23 @@ namespace JPT_TosaTest.WorkFlow
                     {
                         io.WriteIoOutBit(OUT_STEP_FA, !v);
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 生成Image范例
+        /// </summary>
+        public void GenImage()
+        {
+            byte[] bArr = new byte[] { };
+            unsafe
+            {
+                fixed (byte* pc = bArr)
+                {
+                    var p = (void*)pc;
+                    var ptr = new IntPtr(p);
+                    //HOperatorSet.GenImage1(out HObject image, "byte", 500, 500, ptr);
                 }
             }
         }

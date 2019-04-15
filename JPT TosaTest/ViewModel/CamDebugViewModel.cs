@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using HalconDotNet;
 using JPT_TosaTest.Classes;
 using JPT_TosaTest.Config;
 using JPT_TosaTest.Model;
@@ -108,6 +109,7 @@ namespace JPT_TosaTest.ViewModel
             {
 
             }
+                
 
         }
 

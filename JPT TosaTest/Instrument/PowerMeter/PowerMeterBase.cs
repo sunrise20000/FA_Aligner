@@ -89,7 +89,7 @@ namespace JPT_TosaTest.Instrument.PowerMeter
             {
            
                 ComportCfg cfg = CommunicationCfg as ComportCfg;
-                serialport.PortName = $"COM{cfg.Port}";
+                serialport.PortName = cfg.Port;
                 serialport.BaudRate = cfg.BaudRate;
                 serialport.DataBits = cfg.DataBits;
                 switch (cfg.StopBits)

@@ -226,12 +226,18 @@ namespace JPT_TosaTest.Config
                         {
                             if (instrumentCfg.Enabled)
                             {
-                                instrumentBase = hardWareMgrType.Assembly.CreateInstance("JPT_TosaTest.Instruments." + instrumentCfg.InstrumentName.Substring(0, instrumentCfg.InstrumentName.IndexOf("[")), true, BindingFlags.CreateInstance, null, null, null, null) as InstrumentBase;
-                                if (instrumentBase != null)
+                                var ComportCfg = (from cfgs in HardwareCfgMgr.Comports where cfgs.PortName.Equals(instrumentCfg.PortName) select cfgs).FirstOrDefault();
+                                if (ComportCfg != null)
                                 {
-                                    if (instrumentBase.Init())
+                                    var InsName = instrumentCfg.InstrumentName.Substring(0, instrumentCfg.InstrumentName.IndexOf("["));
+                                    instrumentBase = hardWareMgrType.Assembly.CreateInstance("JPT_TosaTest.Instrument.PowerMeter." + InsName, true, BindingFlags.CreateInstance, null,
+                                    new object[] { instrumentCfg, ComportCfg}, null, null) as InstrumentBase;
+                                    if (instrumentBase != null)
                                     {
-
+                                        if (instrumentBase.Init())
+                                        {
+                                            InstrumentMgr.Instance.AddInstrument(instrumentCfg.InstrumentName, instrumentBase); ;
+                                        }
                                     }
                                 }
                             }

@@ -24,6 +24,7 @@ using JPT_TosaTest.WorkFlow.CmdArgs;
 using JPT_TosaTest.Config.ProcessParaManager;
 using JPT_TosaTest.Classes.AlimentResultClass;
 using JPT_TosaTest.WorkFlow;
+using M12.Base;
 
 namespace JPT_TosaTest.ViewModel
 {
@@ -64,6 +65,15 @@ namespace JPT_TosaTest.ViewModel
             //注册错误显示消息
             Messenger.Default.Register<string>(this, "Error", msg => {
                 Application.Current.Dispatcher.Invoke(()=>ShowErrorinfo(msg));
+            });
+
+            Messenger.Default.Register<List<Point3D>>(this, "ShowResult3D", Ret => {
+                Application.Current.Dispatcher.Invoke(() => {
+                    AlimentResult = new AlimentResult3D()
+                    {
+                        DataList = Ret,
+                    };
+                });
             });
 
             ResultCollection = new ObservableCollection<ResultItem>()
@@ -131,6 +141,7 @@ namespace JPT_TosaTest.ViewModel
         ~MainViewModel()
         {
             Messenger.Default.Unregister("Error");
+            Messenger.Default.Unregister("ShowResult");
         }
 
         private void Value_OnStationInfoChanged1(int Index, string StationName, string Msg)
@@ -182,6 +193,7 @@ namespace JPT_TosaTest.ViewModel
                         Y = double.Parse(row[2].ToString()),
                         Z = double.Parse(row[3].ToString()),
                         R = double.Parse(row[4].ToString()),
+                        CX= double.Parse(row[5].ToString()),
                     };
                    
                     WorkFlowMgr.Instance.AddPoint(PointModel);

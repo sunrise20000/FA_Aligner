@@ -9,65 +9,27 @@ using System.Threading.Tasks;
 
 namespace JPT_TosaTest.Instrument
 {
-
-    public struct COMPORT_DATA
-    {
-        public string PortName;
-        public string Port;
-        public int BaudRate;
-        public System.IO.Ports.Parity parity;
-        public int DataBits;
-        public StopBits stopbits;
-        public int Timeout;
-    }
     public abstract class InstrumentBase
     {
-        protected COMPORT_DATA comportData;
-        protected InstrumentCfg Config = null;
+        protected InstrumentCfg InstrumentCfg = null;
+        protected ICommunicationPortCfg CommunicationCfg = null;
         //Comport
         protected SerialPort comPort = null;
         public int Index = -1;
         protected object _lock = new object();
-        public abstract bool Init();
-        public abstract bool DeInit();
-        public InstrumentBase(InstrumentCfg cfg)
-        {
-            Config = cfg;
+        public virtual bool Init() {
+            throw new NotImplementedException();
         }
-        protected void GetPortProfileData(ComportCfg comportCfg)
-        {
-            comportData.PortName = comportCfg.PortName;
-            comportData.Port = comportCfg.Port;
-            comportData.BaudRate = comportCfg.BaudRate;
-            comportData.DataBits = comportCfg.DataBits;
-            comportData.Timeout = comportCfg.TimeOut;
-            switch (comportCfg.Parity.ToLower())
-            {
-                case "n":
-                    comportData.parity = System.IO.Ports.Parity.None;
-                    break;
-                case "o":
-                    comportData.parity = System.IO.Ports.Parity.Odd;
-                    break;
-                default:
-                    comportData.parity = System.IO.Ports.Parity.Even;
-                    break;
-            }
-            switch (comportCfg.StopBits)
-            {
-                case 0:
-                    comportData.stopbits = StopBits.None;
-                    break;
-                case 1:
-                    comportData.stopbits = StopBits.One;
-                    break;
-                case 2:
-                    comportData.stopbits = StopBits.Two;
-                    break;
-                default:
-                    comportData.stopbits = StopBits.OnePointFive;
-                    break;
-            }
+        public virtual bool DeInit() {
+            throw new NotImplementedException();
         }
+        public bool IsInitialized { get; protected set; }
+        public string LastError { get; protected set; }
+        public InstrumentBase(InstrumentCfg InstrumentCfg, ICommunicationPortCfg CommunicationCfg)
+        {
+            this.InstrumentCfg = InstrumentCfg;
+            this.CommunicationCfg = CommunicationCfg;
+        }
+
     }
 }

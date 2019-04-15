@@ -82,9 +82,12 @@ namespace JPT_TosaTest.ViewModel
         private void ThreadFunc(int nCamID)
         {
             CamSnapState = EnumCamSnapState.BUSY;
+            var CamModel = Vision.CheckCamIDAvilible(nCamID);
             while (!cts.Token.IsCancellationRequested)
             {
-                HalconVision.Instance.GrabImage(nCamID,true,true);
+
+                Vision.GrabImage(CamModel, true, true);
+                Vision.DisplayImage(CamModel,true);
                 Thread.Sleep(30);
             }
             CamSnapState = EnumCamSnapState.IDLE;
@@ -188,7 +191,10 @@ namespace JPT_TosaTest.ViewModel
                 return new RelayCommand (() => {
                     if (CurrentSelectedCamera >= 0)
                     {
-                        HalconVision.Instance.GrabImage(CurrentSelectedCamera);
+                        cts.Cancel();
+                        var CamModel = Vision.CheckCamIDAvilible(CurrentSelectedCamera);
+                        Vision.GrabImage(CamModel, true, true);
+                        Vision.DisplayImage(CamModel, true);
                     }
                     else
                     {

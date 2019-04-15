@@ -257,6 +257,9 @@
     <Compile Include="Converter\Visibility2Enable.cs" />
     <Compile Include="Instrument\InstrumentBase.cs" />
     <Compile Include="Instrument\InstrumentMgr.cs" />
+    <Compile Include="Instrument\PowerMeter\Newport2832C.cs" />
+    <Compile Include="Instrument\PowerMeter\Newport2832CMetaProperty.cs" />
+    <Compile Include="Instrument\PowerMeter\PowerMeterBase.cs" />
     <Compile Include="IOCards\IIO.cs" />
     <Compile Include="IOCards\IOCardMgr.cs" />
     <Compile Include="IOCards\IO_IrixiEE0017.cs" />

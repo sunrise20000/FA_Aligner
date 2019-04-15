@@ -13,7 +13,9 @@ namespace JPT_TosaTest.Instrument.PowerMeter
 {
     public class PowerMeterBase : InstrumentBase, INotifyPropertyChanged
     {
-        public PowerMeterBase(InstrumentCfg InstrumentCfg, ICommunicationPortCfg CommunicationCfg) : base(InstrumentCfg, CommunicationCfg) { }
+        public PowerMeterBase(InstrumentCfg InstrumentCfg, ICommunicationPortCfg CommunicationCfg) : base(InstrumentCfg, CommunicationCfg) {
+            serialport = new SerialPort();
+        }
         #region Variables
 
         protected SerialPort serialport;
@@ -85,6 +87,7 @@ namespace JPT_TosaTest.Instrument.PowerMeter
 #if !FAKE_ME
             try
             {
+           
                 ComportCfg cfg = CommunicationCfg as ComportCfg;
                 serialport.PortName = $"COM{cfg.Port}";
                 serialport.BaudRate = cfg.BaudRate;
